@@ -165,9 +165,12 @@
 .top-action:hover .action-tip { opacity: 1; }
 
 /* ── Phone-section divider: right border only, no extra line ── */
+/* Make the left divider match a typical divider style */
 .phone-section {
-  border-right: 1px solid #e5e7eb;
-  /* no border-left, no border-top, no border-bottom */
+  border-right: none;
+  border-left: 1px solid #e5e7eb;  /* Default thin gray */
+  padding-left: 1rem;
+  margin-left: 0.5rem;
 }
 
 /* ══════════════════════ BADGE ══════════════════════ */
