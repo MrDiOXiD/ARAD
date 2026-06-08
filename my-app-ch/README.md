@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# الکتریکی آنلاین — Header (Next.js)
 
-## Getting Started
+## One-time setup
 
-First, run the development server:
+Run this inside your Next.js project root:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install bootstrap-icons
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+That's the only extra dependency needed.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Drop these files into your project
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| File | Destination |
+|------|-------------|
+| `components/Header.tsx` | `components/Header.tsx` |
+| `styles/globals.css` | `styles/globals.css` (or your existing globals) |
+| `tailwind.config.js` | merge `theme.extend` into yours |
+| `app/layout.tsx` | `app/layout.tsx` |
+| `app/page.tsx` | `app/page.tsx` |
+| `postcss.config.js` | only if you don't have one |
 
-## Learn More
+## If you already have a globals.css
 
-To learn more about Next.js, take a look at the following resources:
+Just add this one line after your `@tailwind` directives:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```css
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Adding your logo
 
-## Deploy on Vercel
+In `Header.tsx`, find `.elec-logo` div and replace it:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```tsx
+import Image from 'next/image';
+// ...
+<div className="elec-logo">
+  <Image src="/logo.png" alt="لوگو" width={110} height={44} />
+</div>
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Why this works
+
+All header styles are embedded in a `<style>` tag inside the component itself.
+This means zero dependency on Tailwind custom config, zero CDN calls, and
+zero purging issues. Bootstrap Icons are loaded from `node_modules` via
+`@import 'bootstrap-icons/font/bootstrap-icons.css'` in globals.css —
+which Next.js handles perfectly after `npm install bootstrap-icons`.

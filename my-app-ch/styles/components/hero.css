@@ -1,0 +1,114 @@
+
+/* ══════════════════════ HERO BANNER ══════════════════════ */
+
+.banner-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr 1fr;
+  gap: 14px;
+  align-items: stretch;
+}
+.banner-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.banner-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(28px) scale(0.97);
+  transition:
+    opacity 0.52s cubic-bezier(.22,1,.36,1),
+    transform 0.52s cubic-bezier(.22,1,.36,1),
+    box-shadow 0.3s ease;
+}
+.banner-card--short { min-height: 160px; }
+.banner-card--tall  { min-height: 336px; flex: 1; }
+
+.banner-card--visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+.banner-card:hover {
+  box-shadow: 0 16px 40px rgba(0,0,0,0.18), 0 4px 12px rgba(0,0,0,0.10);
+}
+.banner-card--visible:hover {
+  transform: translateY(-4px) scale(1.012);
+}
+
+.banner-bg-icon {
+  position: absolute;
+  top: -12px;
+  left: -16px;
+  font-size: 130px;
+  color: rgba(255,255,255,0.13);
+  pointer-events: none;
+  line-height: 1;
+  transition: transform 0.45s cubic-bezier(.22,1,.36,1), color 0.3s;
+  transform: rotate(-10deg);
+}
+.banner-card:hover .banner-bg-icon {
+  transform: rotate(-4deg) scale(1.08) translateY(-6px);
+  color: rgba(255,255,255,0.22);
+}
+
+.banner-shimmer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(255,255,255,0.18) 50%,
+    transparent 70%
+  );
+  transform: translateX(-100%);
+}
+.banner-card:hover .banner-shimmer {
+  animation: banner-shine 0.6s cubic-bezier(.22,1,.36,1) forwards;
+}
+@keyframes banner-shine {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(160%); }
+}
+
+@keyframes sway {
+  0%, 100% { transform: rotate(-2.5deg); }
+  50%       { transform: rotate(2.5deg); }
+}
+.hanging-bulb {
+  transform-origin: top center;
+  animation: sway 3.5s ease-in-out infinite;
+}
+
+.banner-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(30, 30, 30, 0.82);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 8px;
+  text-decoration: none;
+  backdrop-filter: blur(4px);
+  transition: background 0.22s, transform 0.18s;
+  white-space: nowrap;
+}
+.banner-cta:hover {
+  background: rgba(10, 10, 10, 0.95);
+  transform: translateX(-3px);
+}
+
+@media (max-width: 640px) {
+  .banner-grid { grid-template-columns: 1fr; }
+  .banner-card--tall  { min-height: 240px; }
+  .banner-card--short { min-height: 140px; }
+}

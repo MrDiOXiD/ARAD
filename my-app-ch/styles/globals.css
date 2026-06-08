@@ -1,0 +1,96 @@
+/* ══════════════════════════════════════════════
+   ALL @import MUST be first — PostCSS rule
+══════════════════════════════════════════════ */
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+@import './components/hero.css';
+@import './components/products.css';
+@import './components/footer.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Keyframes ── */
+@keyframes hdr-entry {
+  from { opacity: 0; transform: translateY(-14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes nav-entry {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes mob-drop {
+  from { opacity: 0; transform: scaleY(0.93) translateY(-8px); }
+  to   { opacity: 1; transform: scaleY(1) translateY(0); }
+}
+@keyframes badge-beat {
+  0%,100% { transform: scale(1); }
+  50%     { transform: scale(1.14); }
+}
+@keyframes phone-wiggle {
+  0%,100% { transform: rotate(-5deg); }
+  50%     { transform: rotate(5deg); }
+}
+@keyframes shine-sweep {
+  from { left: -80%; }
+  to   { left: 130%; }
+}
+
+/* ── Animation utility classes ── */
+.header-entry  { animation: hdr-entry 0.45s cubic-bezier(.22,1,.36,1) both; }
+.mobile-menu-drop { animation: mob-drop 0.32s cubic-bezier(.22,1,.36,1) both; }
+.badge-pulse   { animation: badge-beat 2.4s ease-in-out 1s infinite; }
+
+/* ── Search focus-within glow ── */
+.search-wrap:focus-within .search-bar {
+  border-color: #F5C518;
+  box-shadow: 0 0 0 3px rgba(245,197,24,0.2);
+}
+
+/* ── Search button shine ── */
+.search-shine { position: relative; overflow: hidden; }
+.search-shine::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -80%;
+  width: 55%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.38), transparent);
+  transform: skewX(-18deg);
+}
+.search-shine:hover::after { animation: shine-sweep 0.5s ease forwards; }
+
+/* ── Nav underline slide ── */
+.nav-item-link { position: relative; animation: nav-entry 0.38s both; }
+.nav-item-link:nth-child(1) { animation-delay: 0.08s; }
+.nav-item-link:nth-child(2) { animation-delay: 0.14s; }
+.nav-item-link:nth-child(3) { animation-delay: 0.20s; }
+.nav-item-link:nth-child(4) { animation-delay: 0.26s; }
+.nav-item-link:nth-child(5) { animation-delay: 0.32s; }
+.nav-item-link:nth-child(6) { animation-delay: 0.38s; }
+.nav-item-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 50%; right: 50%;
+  height: 2px; background: #F5C518; border-radius: 2px;
+  transition: left 0.28s cubic-bezier(.22,1,.36,1), right 0.28s cubic-bezier(.22,1,.36,1);
+}
+.nav-item-link:hover::after { left: 0; right: 0; }
+.nav-icon { transition: color 0.22s, transform 0.25s cubic-bezier(.22,1,.36,1); }
+.nav-item-link:hover .nav-icon { color: #F5C518 !important; transform: scale(1.2) rotate(-5deg); }
+
+/* ── Top action icons ── */
+.top-action { transition: transform 0.22s cubic-bezier(.22,1,.36,1), color 0.18s; }
+.top-action:hover { transform: translateY(-3px) scale(1.14); color: #F5C518; }
+.action-tip {
+  position: absolute; bottom: calc(100% + 7px); left: 50%;
+  transform: translateX(-50%);
+  background: #1a1a1a; color: #fff;
+  font-size: 11px; padding: 3px 9px; border-radius: 6px;
+  white-space: nowrap; pointer-events: none; opacity: 0;
+  transition: opacity 0.18s; z-index: 100;
+}
+.top-action:hover .action-tip { opacity: 1; }
+.phone-wiggle:hover { animation: phone-wiggle 0.4s ease-in-out; }
+
+/* ── Base ── */
+body { font-family: 'Vazirmatn', sans-serif; margin: 0; background: #f3f4f6; }
