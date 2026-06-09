@@ -109,7 +109,7 @@ export default function Header() {
             </Link>
 
             {/* Login */}
-            <Link href="#" className="top-action relative flex flex-col items-center gap-0.5 text-gray-700 no-underline">
+            <Link href="/login" className="top-action relative flex flex-col items-center gap-0.5 text-gray-700 no-underline">
               <span className="action-tip">ثبت نام</span>
               <i className="bi bi-person text-2xl" />
               <span className="text-[11px] text-gray-500">ثبت نام</span>
@@ -119,7 +119,7 @@ export default function Header() {
             <Link href="#" className="top-action relative flex flex-col items-center gap-0.5 text-gray-700 no-underline">
               <span className="action-tip">علاقه‌مندی</span>
               <i className="bi bi-heart text-2xl" />
-              <span className="text-[11px] text-gray-500">علاقه‌مندی</span>
+              <span className="text-[11px] text-gray-500">ایلیا احمد معظم</span>
             </Link>
 
           </div>
