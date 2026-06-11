@@ -1,36 +1,22 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Link from 'next/link';
 import '@/styles/components/login.css';
 
 type Mode = 'login' | 'register';
 
-function DecoPanel() {
-  return (
-    <div className="auth-deco">
-      <div className="auth-deco-glow" />
-      <i className="bi bi-lightbulb-fill auth-deco-icon" />
-      <p className="auth-deco-title">الکتریکی آنلاین</p>
-      <p className="auth-deco-sub">بزرگ‌ترین فروشگاه آنلاین<br />لوازم برقی ایران</p>
-      <div className="auth-deco-bottom">
-        <i className="bi bi-lightning-charge-fill" />
-        onlineelectricy.com
-      </div>
-    </div>
-  );
-}
-
 export default function AuthPage({ defaultMode = 'login' }: { defaultMode?: Mode }) {
-  const [mode, setMode]             = useState<Mode>(defaultMode);
-  const [showPass, setShowPass]     = useState(false);
+  const [mode, setMode]               = useState<Mode>(defaultMode);
+  const [showPass, setShowPass]       = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const decoRef = useRef<HTMLDivElement>(null);
 
   /* ── Login state ── */
-  const [lPhone, setLPhone]   = useState('');
-  const [lPass, setLPass]     = useState('');
-  const [lPhErr, setLPhErr]   = useState('');
-  const [lPaErr, setLPaErr]   = useState('');
+  const [lPhone, setLPhone] = useState('');
+  const [lPass,  setLPass]  = useState('');
+  const [lPhErr, setLPhErr] = useState('');
+  const [lPaErr, setLPaErr] = useState('');
 
   /* ── Register state ── */
   const [rName,    setRName]    = useState('');
@@ -45,6 +31,18 @@ export default function AuthPage({ defaultMode = 'login' }: { defaultMode?: Mode
 
   const isReg = mode === 'register';
 
+  /* ── Switch mode + trigger deco slide animation ── */
+  const switchMode = (next: Mode) => {
+    const deco = decoRef.current;
+    if (deco) {
+      // Remove any existing animation, force reflow, then re-add
+      deco.removeAttribute('data-slide');
+      void deco.offsetWidth; // reflow
+      deco.setAttribute('data-slide', next === 'register' ? 'from-right' : 'from-left');
+    }
+    setMode(next);
+  };
+
   /* ── Handlers ── */
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,10 +55,10 @@ export default function AuthPage({ defaultMode = 'login' }: { defaultMode?: Mode
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
     let ok = true;
-    if (!rName)                          { setRNameErr('نام خود را وارد کنید'); ok = false; }            else setRNameErr('');
-    if (!rPhone || rPhone.length < 10)   { setRPhErr('شماره موبایل معتبر وارد کنید'); ok = false; }     else setRPhErr('');
-    if (!rPass  || rPass.length  < 6)    { setRPaErr('رمز عبور باید حداقل ۶ کاراکتر باشد'); ok = false; } else setRPaErr('');
-    if (rConfirm !== rPass)              { setRCoErr('رمز عبور و تکرار آن یکسان نیستند'); ok = false; }  else setRCoErr('');
+    if (!rName)                        { setRNameErr('نام خود را وارد کنید'); ok = false; }             else setRNameErr('');
+    if (!rPhone || rPhone.length < 10) { setRPhErr('شماره موبایل معتبر وارد کنید'); ok = false; }      else setRPhErr('');
+    if (!rPass  || rPass.length  < 6)  { setRPaErr('رمز عبور باید حداقل ۶ کاراکتر باشد'); ok = false; } else setRPaErr('');
+    if (rConfirm !== rPass)            { setRCoErr('رمز عبور و تکرار آن یکسان نیستند'); ok = false; }   else setRCoErr('');
     if (ok) console.log('register', { rName, rPhone, rPass });
   };
 
@@ -68,7 +66,16 @@ export default function AuthPage({ defaultMode = 'login' }: { defaultMode?: Mode
     <div className={`auth-page${isReg ? ' is-register' : ''}`}>
 
       {/* ════ DECORATIVE PANEL ════ */}
-      <DecoPanel />
+      <div className="auth-deco" ref={decoRef}>
+        <div className="auth-deco-glow" />
+        <i className="bi bi-lightbulb-fill auth-deco-icon" />
+        <p className="auth-deco-title">الکتریکی آنلاین</p>
+        <p className="auth-deco-sub">بزرگ‌ترین فروشگاه آنلاین<br />لوازم برقی ایران</p>
+        <div className="auth-deco-bottom">
+          <i className="bi bi-lightning-charge-fill" />
+          onlineelectricy.com
+        </div>
+      </div>
 
       {/* ════ FORMS TRACK ════ */}
       <div className="auth-forms-track">
@@ -91,7 +98,6 @@ export default function AuthPage({ defaultMode = 'login' }: { defaultMode?: Mode
           <p className="lgn-sub">خوش برگشتید! اطلاعات خود را وارد کنید.</p>
 
           <form onSubmit={handleLogin} noValidate>
-
             <div className={`lgn-field${lPhErr ? ' has-error' : ''}`}>
               <label className="lgn-label" htmlFor="l-phone">شماره موبایل</label>
               <div className="lgn-input-wrap">
@@ -130,7 +136,7 @@ export default function AuthPage({ defaultMode = 'login' }: { defaultMode?: Mode
           <div className="lgn-divider">یا</div>
           <p className="lgn-switch">
             حساب کاربری ندارید؟
-            <button type="button" onClick={() => setMode('register')}>ثبت نام کنید</button>
+            <button type="button" onClick={() => switchMode('register')}>ثبت نام کنید</button>
           </p>
         </div>
 
@@ -152,7 +158,6 @@ export default function AuthPage({ defaultMode = 'login' }: { defaultMode?: Mode
           <p className="lgn-sub">اطلاعات خود را وارد کنید.</p>
 
           <form onSubmit={handleRegister} noValidate>
-
             <div className={`lgn-field${rNameErr ? ' has-error' : ''}`}>
               <label className="lgn-label" htmlFor="r-name">نام و نام خانوادگی</label>
               <div className="lgn-input-wrap">
@@ -214,11 +219,11 @@ export default function AuthPage({ defaultMode = 'login' }: { defaultMode?: Mode
           <div className="lgn-divider">یا</div>
           <p className="lgn-switch">
             قبلاً ثبت نام کرده‌اید؟
-            <button type="button" onClick={() => setMode('login')}>وارد شوید</button>
+            <button type="button" onClick={() => switchMode('login')}>وارد شوید</button>
           </p>
         </div>
 
-      </div>
+      </div>{/* end auth-forms-track */}
     </div>
   );
 }
