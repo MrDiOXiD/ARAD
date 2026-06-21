@@ -16,7 +16,7 @@ export default function ProductSection({ title, products, scroll = false }: Prop
             <span className="section-title-dot" />
             {title}
           </div>
-          <Link href="#" className="section-view-all">
+          <Link href="/shop" className="section-view-all">
             نمایش همه
             <i className="bi bi-arrow-left text-xs" />
           </Link>
