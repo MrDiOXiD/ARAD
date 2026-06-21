@@ -1,13 +1,18 @@
 import type { Metadata } from 'next';
 import '../styles/globals.css';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
   title: 'الکتریکی آنلاین',
   description: 'فروشگاه آنلاین لوازم برقی',
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  return (<>
+    <header>
+      <Header />
+    </header>
     <html lang="fa" dir="rtl">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -21,5 +26,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {children}
       </body>
     </html>
+      <footer>
+        <Footer />
+
+      </footer>
+  </>
   );
 }

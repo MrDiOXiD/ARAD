@@ -1,7 +1,5 @@
-import Header from '@/components/Header';
 import HeroBanner from '@/components/HeroBanner';
 import ProductSection from '@/components/ProductSection';
-import Footer from '@/components/Footer';
 import { Product } from '@/components/ProductCard';
 
 /* ── Mock data — replace with your real API/DB calls ── */
@@ -33,14 +31,12 @@ const featuredProducts: Product[] = [
 
 export default function HomePage() {
   return (
-    <>
-      <Header />
+   
       <main>
         <HeroBanner />
         <ProductSection title="جدیدترین‌ها"    products={latestProducts}  scroll />
         <ProductSection title="کالاهای منتخب"  products={featuredProducts} />
       </main>
-      <Footer />
-    </>
+   
   );
 }
