@@ -1,6 +1,8 @@
 import HeroBanner from '@/components/HeroBanner';
-import ProductSection from '@/components/ProductSection';
-import { Product } from '@/components/ProductCard';
+import ProductSection from '@/components/product/ProductSection';
+import { Product } from '@/components/product/ProductCard';
+import { cacheLife } from 'next/cache'
+
 
 /* ── Mock data — replace with your real API/DB calls ── */
 const latestProducts: Product[] = [
@@ -29,7 +31,9 @@ const featuredProducts: Product[] = [
   { id: 22, title: 'کلید هوشمند وای‌فای سونوف مدل T3',     price: '۷۹۰,۰۰۰',  oldPrice: '۹۵۰,۰۰۰', badge: 'جدید', icon: 'bi-phone'        },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+   'use cache'
+  cacheLife('hours')
   return (
    
       <main>

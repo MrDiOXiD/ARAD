@@ -5,6 +5,7 @@
 @import './components/hero.css';
 @import './components/products.css';
 @import './components/footer.css';
+@import './components/singleProduct.css';
 
 @tailwind base;
 @tailwind components;
@@ -34,6 +35,15 @@
 @keyframes shine-sweep {
   from { left: -80%; }
   to   { left: 130%; }
+}
+@keyframes prd-pop {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.16); }
+  100% { transform: scale(1); }
+}
+@keyframes prd-rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ── Animation utility classes ── */
