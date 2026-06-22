@@ -37,7 +37,7 @@ const defaultTrustItems = [
   },
 ];
 
-export default function ProductPage({ product, onAddToCart, onBuyNow, onAddSimilarToCart }: ProductPageProps) {
+export default function ProductPage({ product, onAddToCart, onBuyNow, onAddSimilarToCart }: any) {
   return (
     <div className="prd-page" dir="rtl">
       <div className="prd-container">

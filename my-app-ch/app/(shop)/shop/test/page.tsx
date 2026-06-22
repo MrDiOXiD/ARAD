@@ -194,7 +194,7 @@ const defaultTrustItems = [
   },
 ];
 
-export default function ProductPage({ProductPageProps,  onAddToCart, onBuyNow, onAddSimilarToCart }: ProductPageProps) {
+export default function ProductPage({ProductPageProps,  onAddToCart, onBuyNow, onAddSimilarToCart }: any) {
 console.log(ProductPageProps);
  
   return (
