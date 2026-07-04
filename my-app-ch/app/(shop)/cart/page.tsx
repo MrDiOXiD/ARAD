@@ -1,7 +1,7 @@
 // app/cart/page.tsx  — Server Component
 // Replace INITIAL_CART_ITEMS with your real cart fetch (e.g. from DB / API / cookie session)
 
-import CartClientShell from '@/components/cart/components/CartClientShell';
+import CartClientShell from '@/components/cart/CartClientShell';
 import { CartItem } from '@/interfaces/cart/types';
 import '@/styles/components/cart.css';
 const INITIAL_CART_ITEMS: CartItem[] = [

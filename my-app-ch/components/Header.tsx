@@ -61,9 +61,11 @@ export default function Header() {
         <div className="flex items-center gap-4 h-[68px]">
 
           {/* Logo placeholder */}
+          <Link href="/">
           <div className="hidden md:flex items-center justify-center flex-shrink-0 w-28 h-12 border-2 border-dashed border-gray-300 rounded-xl text-gray-300 text-xs">
             لوگو
           </div>
+          </Link>
 
           {/* vertical divider */}
           <div className="hidden sm:block w-px h-10 bg-gray-200 flex-shrink-0" />
@@ -96,7 +98,7 @@ export default function Header() {
           <div className="hidden sm:flex items-center gap-5 flex-shrink-0">
 
             {/* Cart */}
-            <Link href="#" className="top-action relative flex flex-col items-center gap-0.5 text-gray-700 no-underline">
+            <Link href="/cart" className="top-action relative flex flex-col items-center gap-0.5 text-gray-700 no-underline">
               <span className="action-tip">سبد خرید</span>
               <div className="relative">
                 <i className="bi bi-bag text-2xl" />

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import CartHeader from './CartHeader';
 import CartItemList from './CartItemList';
 import OrderSummary from './OrderSummary';
-import type { CartItem } from '../types/cart';
+import { CartItem } from '@/interfaces/cart/types';
 
 interface CartClientShellProps {
   initialItems: CartItem[];
