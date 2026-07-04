@@ -1,6 +1,6 @@
 
 import { SimilarProduct } from '@/interfaces/product/types';
-import { IconPlaceholder } from '@/components/icons/icons';
+import { IconPlaceholder } from '@/components/product/icons/icons';
 import { formatPrice, starString, toPersianDigits } from '@/utils/formats/numbers';
 
 interface SimilarProductCardProps {

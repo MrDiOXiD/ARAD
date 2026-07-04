@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { formatRating, starString, toPersianDigits } from '@/utils/formats/numbers';
-import { IconChevronDown, IconCompare } from '../icons/icons';
+import { IconChevronDown, IconCompare } from './icons/icons';
 import { ColorSwatch, TypeOption } from '@/interfaces/product/types';
 
 

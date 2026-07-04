@@ -2,7 +2,7 @@
 
 import { ProductBadge, ProductImage } from '@/interfaces/product/types';
 import { useState } from 'react';
-import { IconPlaceholder } from '../icons/icons';
+import { IconPlaceholder } from './icons/icons';
 
 
 interface ProductGalleryProps {

@@ -1,0 +1,537 @@
+/* ══════════════════════════════════════════════
+   CART PAGE
+   Prefix: cart-  / order-summary-  / qty-  / promo-  / trust-
+   Brand yellow : #F5C518  →  hover #E0B000
+   Dark base    : #1a1a1a
+   Matches: shop.css / singleProduct.css / globals.css tokens
+══════════════════════════════════════════════ */
+
+/* ── Page wrapper ── */
+.cart-page {
+  background: #f3f4f6;
+  min-height: 80vh;
+  padding: 32px 20px 60px;
+}
+
+.cart-page__container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ══════════════════════════════════════════════
+   BREADCRUMB
+══════════════════════════════════════════════ */
+.cart-breadcrumb {
+  font-size: 13px;
+  color: #94a3b8;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.cart-breadcrumb__sep {
+  color: #cbd5e1;
+  margin: 0 2px;
+}
+
+.cart-breadcrumb__link {
+  color: #94a3b8;
+  text-decoration: none;
+  transition: color 0.18s;
+}
+
+.cart-breadcrumb__link:hover {
+  color: #F5C518;
+}
+
+.cart-breadcrumb__active {
+  color: #475569;
+  font-weight: 700;
+}
+
+/* ══════════════════════════════════════════════
+   PAGE HEADER
+══════════════════════════════════════════════ */
+.cart-header {
+  margin-bottom: 24px;
+}
+
+.cart-header__title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cart-header__title {
+  font-size: 24px;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.cart-header__badge {
+  background-color: #f1f5f9;
+  color: #64748b;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* ══════════════════════════════════════════════
+   TWO-COLUMN LAYOUT
+══════════════════════════════════════════════ */
+.cart-page__layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .cart-page__layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ══════════════════════════════════════════════
+   ITEM LIST
+══════════════════════════════════════════════ */
+.cart-item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ══════════════════════════════════════════════
+   CART ITEM CARD
+══════════════════════════════════════════════ */
+.cart-card {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #edf2f7;
+  padding: 20px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  transition: box-shadow 0.22s, border-color 0.22s;
+}
+
+.cart-card:hover {
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.07);
+  border-color: #e2e8f0;
+}
+
+/* Image */
+.cart-card__image {
+  flex-shrink: 0;
+}
+
+.cart-card__img-placeholder {
+  width: 110px;
+  height: 110px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+}
+
+/* Details */
+.cart-card__details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.cart-card__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.6;
+}
+
+/* Tags */
+.cart-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cart-card__tag {
+  background-color: #f1f5f9;
+  color: #475569;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cart-card__color-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.cart-card__color-dot--yellow { background-color: #fbbf24; }
+.cart-card__color-dot--blue   { background-color: #3b82f6; }
+
+/* Action row */
+.cart-card__actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.cart-card__delete-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 13px;
+  font-family: 'Vazirmatn', sans-serif;
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 0;
+}
+
+.cart-card__delete-btn:hover {
+  color: #ef4444;
+}
+
+/* Pricing column */
+.cart-card__pricing {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  min-width: 140px;
+  flex-shrink: 0;
+}
+
+.cart-card__unit-price {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-bottom: 6px;
+  white-space: nowrap;
+}
+
+.cart-card__line-total {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+  direction: ltr;
+}
+
+.cart-card__line-total span {
+  font-size: 12px;
+  font-weight: 400;
+  color: #64748b;
+}
+
+/* Mobile card stacking */
+@media (max-width: 600px) {
+  .cart-card {
+    flex-wrap: wrap;
+    padding: 16px;
+    gap: 14px;
+  }
+
+  .cart-card__img-placeholder {
+    width: 80px;
+    height: 80px;
+    font-size: 24px;
+  }
+
+  .cart-card__pricing {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 12px;
+    min-width: 0;
+  }
+
+  .cart-card__title {
+    font-size: 14px;
+  }
+}
+
+/* ══════════════════════════════════════════════
+   QUANTITY PICKER
+   — matches prd-stepper from singleProduct.css
+══════════════════════════════════════════════ */
+.qty-picker {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  direction: ltr;
+}
+
+.qty-picker__btn {
+  width: 30px;
+  height: 30px;
+  background: #fafafa;
+  border: none;
+  font-size: 16px;
+  font-weight: 700;
+  color: #64748b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+
+.qty-picker__btn:hover:not(:disabled) {
+  background: #FFF8E1;
+  color: #1a1a1a;
+}
+
+.qty-picker__btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.qty-picker__value {
+  padding: 0 12px;
+  font-weight: 700;
+  font-size: 14px;
+  min-width: 32px;
+  text-align: center;
+}
+
+/* ══════════════════════════════════════════════
+   PROMO CODE INPUT
+   — mirrors shop sidebar inputs
+══════════════════════════════════════════════ */
+.promo-input {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.promo-input__field {
+  flex: 1;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-family: 'Vazirmatn', sans-serif;
+  outline: none;
+  background: #f8fafc;
+  color: #1e293b;
+  transition: border-color 0.18s, box-shadow 0.18s;
+}
+
+.promo-input__field:focus {
+  border-color: #F5C518;
+  box-shadow: 0 0 0 3px rgba(245, 197, 24, 0.18);
+}
+
+.promo-input__apply-btn {
+  flex-shrink: 0;
+  background: #f1f5f9;
+  border: none;
+  padding: 0 16px;
+  border-radius: 10px;
+  color: #475569;
+  font-weight: 700;
+  font-size: 13px;
+  font-family: 'Vazirmatn', sans-serif;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+
+.promo-input__apply-btn:hover:not(:disabled) {
+  background: #F5C518;
+  color: #1a1a1a;
+}
+
+.promo-input__apply-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ══════════════════════════════════════════════
+   ORDER SUMMARY SIDEBAR
+   — card style matches shop-filter-box
+══════════════════════════════════════════════ */
+.order-summary {
+  position: sticky;
+  top: 88px;
+}
+
+.order-summary__card {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #edf2f7;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.order-summary__title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 20px;
+}
+
+/* Receipt breakdown */
+.order-summary__receipt {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+}
+
+.order-summary__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  font-size: 14px;
+}
+
+.order-summary__row-label {
+  color: #64748b;
+}
+
+.order-summary__row-value {
+  font-weight: 700;
+  color: #334155;
+  direction: ltr;
+}
+
+.order-summary__row-value--free {
+  color: #10b981;
+}
+
+.order-summary__divider {
+  border: none;
+  border-top: 1px dashed #e2e8f0;
+  margin: 18px 0;
+}
+
+/* Grand total */
+.order-summary__total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.order-summary__total-label {
+  font-weight: 800;
+  font-size: 15px;
+  color: #0f172a;
+}
+
+.order-summary__total-value {
+  font-size: 22px;
+  font-weight: 900;
+  color: #0f172a;
+  direction: ltr;
+}
+
+.order-summary__total-value small {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* ── CTA Buttons — mirrors prd-btn from singleProduct.css ── */
+.order-summary__checkout-btn {
+  width: 100%;
+  background: #F5C518;
+  color: #1a1a1a;
+  border: none;
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 14px;
+  font-weight: 800;
+  font-family: 'Vazirmatn', sans-serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  margin-bottom: 12px;
+  transition: background 0.18s, box-shadow 0.18s, transform 0.12s;
+}
+
+.order-summary__checkout-btn:hover {
+  background: #E0B000;
+  box-shadow: 0 4px 18px rgba(245, 197, 24, 0.32);
+  transform: translateY(-1px);
+}
+
+.order-summary__checkout-btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.order-summary__continue-btn {
+  width: 100%;
+  background: transparent;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: 'Vazirmatn', sans-serif;
+  color: #475569;
+  cursor: pointer;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.18s, border-color 0.18s;
+}
+
+.order-summary__continue-btn:hover {
+  background: #f8fafc;
+  border-color: #F5C518;
+}
+
+/* ══════════════════════════════════════════════
+   TRUST BADGES
+   — matches prd-perks from singleProduct.css
+══════════════════════════════════════════════ */
+.trust-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-top: 1px solid #f1f5f9;
+  margin-top: 24px;
+  padding-top: 16px;
+}
+
+.trust-badges__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.trust-badges__icon {
+  color: #10b981;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}

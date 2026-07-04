@@ -3,7 +3,7 @@
 import { SellerInfo } from '@/interfaces/product/types';
 import { formatPrice, formatRating, toPersianDigits } from '@/utils/formats/numbers';
 import { useState } from 'react';
-import { IconCheck } from '../icons/icons';
+import { IconCheck } from './icons/icons';
 ;
 
 interface ProductBuyBoxProps {

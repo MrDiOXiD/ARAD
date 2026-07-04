@@ -1,5 +1,5 @@
 import { TrustItem } from "@/interfaces/product/types";
-import { IconReturn, IconShield, IconShipping } from "@/components/icons/icons";
+import { IconReturn, IconShield, IconShipping } from "@/components/product/icons/icons";
 
 interface ProductTrustBarProps {
   items: TrustItem[];
