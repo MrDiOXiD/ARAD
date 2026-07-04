@@ -1,8 +1,8 @@
 'use client';
 
+import { CartItem } from '@/interfaces/cart/types';
 import QuantityPicker from './QuantityPicker';
 import TrashIcon from './icons/TrashIcon';
-import type { CartItem } from '../types/cart';
 
 function formatPrice(n: number): string {
   return n.toLocaleString('fa-IR');
