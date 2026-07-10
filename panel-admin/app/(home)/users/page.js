@@ -4,20 +4,22 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 export default function UsersPage({ searchParams }) {
-    console.log(21);
-    
-    const params = new URLSearchParams(searchParams);
+  console.log(21);
 
-    return (
-        <>
-            <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h4 className="fw-bold">کاربران</h4>
-                <Link href="/users/create" className="btn btn-sm btn-outline-dark">ایجاد کاربر</Link>
-            </div>
+  const params = new URLSearchParams(searchParams);
 
-            <Suspense key={params.toString()} fallback={<Loading />}>
-                <Table params={params.toString()} />
-            </Suspense>
-        </>
-    )
+  return (
+    <>
+      <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h4 className="fw-bold">کاربران</h4>
+        <Link href="/users/create" className="btn btn-sm btn-outline-dark">
+          ایجاد کاربر
+        </Link>
+      </div>
+
+      <Suspense key={params.toString()} fallback={<Loading />}>
+        <Table params={params.toString()} />
+      </Suspense>
+    </>
+  );
 }
