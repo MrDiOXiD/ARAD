@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 export default function UsersPage({ searchParams }) {
+    console.log(21);
+    
     const params = new URLSearchParams(searchParams);
 
     return (

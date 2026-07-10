@@ -2,7 +2,7 @@ import Chart from "@/components/Chart";
 import { getFetch } from "@/utils/fetch";
 
 export default async function Home() {
-  const dataChart = await getFetch("/transactions/chart");
+  const dataChart = await getFetch("/products");
 
   return (
     <>

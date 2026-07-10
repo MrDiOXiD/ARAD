@@ -5,6 +5,7 @@ import { handleError } from "@/utils/helper";
 import { cookies } from 'next/headers';
 
 async function login(state, formData) {
+    
     const email = formData.get('email');
     const password = formData.get('password');
 
@@ -15,12 +16,15 @@ async function login(state, formData) {
         }
     }
 
-    const data = await postFetchUnauth("/auth/login", { email, password })
+    const data = await postFetchUnauth("/user/login", { email, password })
 
-    if (data.status === 'success') {
+    
+
+    if (data.user ) {
+        
         cookies().set({
             name: 'token',
-            value: data.data.token,
+            value: data.accessToken,
             httpOnly: true,
             path: '/',
             maxAge: 60 * 60 * 24 * 7, // 1 week
