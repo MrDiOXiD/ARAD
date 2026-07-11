@@ -1,0 +1,238 @@
+/* ══════════════════════════════════════════════════════
+   ACCOUNT PAGE  (dashboard sub-page)
+   Prefix : ac-
+   Tokens : #F5C518 yellow | #1a1a1a dark | #ef4444 red
+   Inherits db-layout / db-sidebar / db-header
+══════════════════════════════════════════════════════ */
+
+.ac-page {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ── Breadcrumb (reuses wl- pattern) ── */
+.ac-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #94a3b8;
+  margin-bottom: 8px;
+}
+.ac-breadcrumb a   { color: #94a3b8; text-decoration: none; transition: color .18s; }
+.ac-breadcrumb a:hover { color: #F5C518; }
+.ac-breadcrumb i   { font-size: 10px; color: #cbd5e1; }
+.ac-breadcrumb span { color: #475569; font-weight: 700; }
+
+/* ── Two-column grid ── */
+.ac-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+@media (max-width: 820px) {
+  .ac-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Card shell ── */
+.ac-card {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #f0f0f0;
+  padding: 28px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Icon bubble */
+.ac-card__icon-wrap {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #FFF8E1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6px;
+}
+.ac-card__icon {
+  font-size: 24px;
+  color: #F5C518;
+}
+
+.ac-card__title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
+.ac-card__subtitle {
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.7;
+  margin: 0 0 12px;
+}
+
+/* ── Form ── */
+.ac-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.ac-form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 500px) {
+  .ac-form__row { grid-template-columns: 1fr; }
+}
+
+.ac-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ac-form__label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  text-align: right;
+}
+
+.ac-form__input {
+  width: 100%;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-size: 14px;
+  font-family: 'Vazirmatn', sans-serif;
+  color: #1e293b;
+  background: #f8fafc;
+  outline: none;
+  text-align: right;
+  transition: border-color .18s, box-shadow .18s;
+  box-sizing: border-box;
+}
+.ac-form__input:focus {
+  border-color: #F5C518;
+  box-shadow: 0 0 0 3px rgba(245,197,24,.15);
+  background: #fff;
+}
+
+/* Password wrapper */
+.ac-form__pw-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.ac-form__input--pw {
+  padding-left: 42px;
+  text-align: left;
+}
+.ac-form__pw-toggle {
+  position: absolute;
+  left: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #94a3b8;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  transition: color .18s;
+}
+.ac-form__pw-toggle:hover { color: #475569; }
+
+/* Hint row */
+.ac-form__hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* ── Shared buttons ── */
+.ac-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 12px;
+  padding: 13px 24px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: 'Vazirmatn', sans-serif;
+  cursor: pointer;
+  border: none;
+  transition: background .18s, transform .15s, border-color .18s;
+}
+.ac-btn:hover { transform: translateY(-1px); }
+.ac-btn:active { transform: translateY(0); }
+
+.ac-btn--dark {
+  width: 100%;
+  background: #1a1a1a;
+  color: #fff;
+  margin-top: 4px;
+}
+.ac-btn--dark:hover { background: #333; }
+
+.ac-btn--danger {
+  background: #ef4444;
+  color: #fff;
+}
+.ac-btn--danger:hover { background: #dc2626; }
+
+.ac-btn--ghost {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1.5px solid #e2e8f0;
+}
+.ac-btn--ghost:hover { background: #e2e8f0; }
+
+/* Logout standalone button */
+.ac-btn--logout {
+  width: 100%;
+  background: #fff5f5;
+  color: #ef4444;
+  border: 1.5px solid #fca5a5;
+}
+.ac-btn--logout:hover {
+  background: #fee2e2;
+  border-color: #ef4444;
+}
+
+/* Logout confirm box */
+.ac-logout-confirm {
+  background: #fff5f5;
+  border: 1.5px solid #fca5a5;
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.ac-logout-confirm__text {
+  font-size: 14px;
+  font-weight: 700;
+  color: #ef4444;
+  margin: 0;
+  text-align: center;
+}
+.ac-logout-confirm__actions {
+  display: flex;
+  gap: 10px;
+}
+.ac-logout-confirm__actions .ac-btn {
+  flex: 1;
+  padding: 10px;
+}

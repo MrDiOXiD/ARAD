@@ -1,0 +1,275 @@
+/* ══════════════════════════════════════════════════════
+   ADDRESSES PAGE  (dashboard sub-page)
+   Prefix : addr-
+   Tokens : #F5C518 brand yellow | #ef4444 red | #1a1a1a dark
+   Inherits db-layout / db-sidebar / db-header from dashboard.css
+══════════════════════════════════════════════════════ */
+
+.addr-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ── Header ── */
+.addr-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.addr-header__title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: right;
+}
+
+.addr-header__title {
+  font-size: 24px;
+  font-weight: 900;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+}
+
+.addr-header__icon {
+  font-size: 22px;
+  color: #475569;
+}
+
+.addr-header__subtitle {
+  font-size: 13px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Add button — dark filled, matches db-welcome__cta */
+.addr-header__add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 22px;
+  background: #1a1a1a;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: 'Vazirmatn', sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.18s, transform 0.15s;
+}
+
+.addr-header__add-btn:hover {
+  background: #333;
+  transform: translateY(-1px);
+}
+
+/* ── Grid ── */
+.addr-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 860px) {
+  .addr-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Card ── */
+.addr-card {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #f0f0f0;
+  padding: 20px 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: box-shadow 0.22s, border-color 0.22s;
+}
+
+.addr-card:hover {
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.07);
+  border-color: #e2e8f0;
+}
+
+/* Top row */
+.addr-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.addr-card__menu-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+  transition: background 0.15s;
+  order: -1;          /* far left in RTL */
+  align-self: flex-start;
+}
+
+.addr-card__menu-btn:hover {
+  background: #f1f5f9;
+}
+
+.addr-card__dots {
+  font-size: 20px;
+  font-weight: 700;
+  color: #94a3b8;
+  line-height: 1;
+  letter-spacing: 1px;
+}
+
+.addr-card__label-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.addr-card__label {
+  font-size: 16px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
+
+/* Default badge — green outlined */
+.addr-card__default-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1.5px solid #86efac;
+  background: #f0fdf4;
+  color: #16a34a;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Address type icon */
+.addr-card__icon {
+  color: #475569;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Body */
+.addr-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 4px;
+}
+
+.addr-card__name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+  margin: 0;
+  text-align: right;
+}
+
+.addr-card__address {
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.8;
+  margin: 0;
+  text-align: right;
+}
+
+.addr-card__phone {
+  font-size: 13px;
+  color: #475569;
+  font-weight: 600;
+  margin: 0;
+  text-align: right;
+  direction: ltr;
+}
+
+/* Action row */
+.addr-card__actions {
+  display: flex;
+  gap: 10px;
+  padding-top: 4px;
+  border-top: 1px solid #f8fafc;
+}
+
+/* Delete — red outlined */
+.addr-card__delete-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: 1.5px solid #fca5a5;
+  background: #fff5f5;
+  color: #ef4444;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'Vazirmatn', sans-serif;
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s;
+}
+
+.addr-card__delete-btn:hover {
+  background: #fee2e2;
+  border-color: #ef4444;
+}
+
+/* Edit — neutral outlined */
+.addr-card__edit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: 1.5px solid #e2e8f0;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'Vazirmatn', sans-serif;
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s, color 0.18s;
+}
+
+.addr-card__edit-btn:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #1a1a1a;
+}
+
+/* ── Empty state ── */
+.addr-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 80px 20px;
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #f0f0f0;
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+.addr-empty__icon {
+  font-size: 52px;
+  color: #e2e8f0;
+}

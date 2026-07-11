@@ -11,6 +11,8 @@ module.exports = {
         vazir: ['Vazirmatn', 'sans-serif'],
       },
     },
+  }, corePlugins: {
+    preflight: false,
   },
   plugins: [],
 };

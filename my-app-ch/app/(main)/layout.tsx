@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import '../styles/globals.css';
+import '../../styles/globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
@@ -9,10 +9,8 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return (<>
-    <header>
-      <Header />
-    </header>
+  return (
+   <>
     <html lang="fa" dir="rtl">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -23,13 +21,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         />
       </head>
       <body className="bg-gray-100 min-h-screen" style={{ fontFamily: 'Vazirmatn, sans-serif', margin: 0 }}>
+      <Header />
         {children}
+        <Footer />
       </body>
     </html>
-      <footer>
-        <Footer />
-
-      </footer>
-  </>
+ </>
   );
 }

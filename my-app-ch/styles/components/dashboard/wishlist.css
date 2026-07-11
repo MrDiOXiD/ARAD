@@ -1,0 +1,361 @@
+/* ══════════════════════════════════════════════════════
+   WISHLIST PAGE  (dashboard sub-page)
+   Prefix   : wl-
+   Brand    : #F5C518 → hover #E0B000  |  dark #1a1a1a
+   Heart    : #ef4444  (red, as in mockup)
+   Radius   : 16px cards, 12px chips
+   Inherits : db-layout / db-sidebar / db-header from dashboard.css
+══════════════════════════════════════════════════════ */
+
+/* ── Page area (fills db-main) ── */
+.wl-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ══════════════════════════════════════════════════════
+   BREADCRUMB
+══════════════════════════════════════════════════════ */
+.wl-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
+
+.wl-breadcrumb__link {
+  color: #94a3b8;
+  text-decoration: none;
+  transition: color 0.18s;
+}
+
+.wl-breadcrumb__link:hover {
+  color: #F5C518;
+}
+
+.wl-breadcrumb__sep {
+  font-size: 10px;
+  color: #cbd5e1;
+}
+
+.wl-breadcrumb__active {
+  color: #475569;
+  font-weight: 700;
+}
+
+/* ══════════════════════════════════════════════════════
+   PAGE HEADER
+══════════════════════════════════════════════════════ */
+.wl-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.wl-header__title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.wl-header__title {
+  font-size: 26px;
+  font-weight: 900;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wl-header__heart {
+  font-size: 22px;
+  color: #ef4444;
+}
+
+.wl-header__subtitle {
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* Delete-selected button — outlined red */
+.wl-header__delete-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  border-radius: 10px;
+  border: 1.5px solid #fca5a5;
+  background: #fff5f5;
+  color: #ef4444;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'Vazirmatn', sans-serif;
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s, color 0.18s;
+  white-space: nowrap;
+  align-self: flex-start;
+}
+
+.wl-header__delete-btn:hover:not(:disabled) {
+  background: #fee2e2;
+  border-color: #ef4444;
+}
+
+.wl-header__delete-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ══════════════════════════════════════════════════════
+   COUNT CHIP
+══════════════════════════════════════════════════════ */
+.wl-count-chip {
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 16px;
+}
+
+.wl-count-chip span {
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* ══════════════════════════════════════════════════════
+   GRID
+══════════════════════════════════════════════════════ */
+.wl-grid-wrap {
+  /* sits inside db-main which already has gap */
+}
+
+.wl-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 1100px) {
+  .wl-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 750px) {
+  .wl-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+  .wl-grid { grid-template-columns: 1fr; }
+}
+
+/* ══════════════════════════════════════════════════════
+   PRODUCT CARD
+══════════════════════════════════════════════════════ */
+.wl-card {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #f0f0f0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: box-shadow 0.22s, border-color 0.22s, transform 0.22s;
+}
+
+.wl-card:hover {
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+  border-color: #e2e8f0;
+  transform: translateY(-2px);
+}
+
+/* ── Heart button (top-left in RTL) ── */
+.wl-card__heart-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: transform 0.2s;
+  z-index: 2;
+}
+
+.wl-card__heart-btn i {
+  font-size: 18px;
+  color: #ef4444;
+}
+
+.wl-card__heart-btn:hover {
+  transform: scale(1.2);
+}
+
+/* ── Checkbox (top-right in RTL = top-left visually) ── */
+.wl-card__checkbox-wrap {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  cursor: pointer;
+}
+
+.wl-card__checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: #F5C518;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+/* ── Product image ── */
+.wl-card__img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.wl-card__img-icon {
+  font-size: 72px;
+  line-height: 1;
+}
+
+/* ── Card body ── */
+.wl-card__body {
+  padding: 12px 14px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.wl-card__title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0;
+}
+
+.wl-card__price {
+  margin: 0;
+  direction: ltr;
+  text-align: right;
+}
+
+.wl-card__price-amount {
+  font-size: 15px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.wl-card__price-unit {
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+/* ── Action row ── */
+.wl-card__actions {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  padding: 10px 14px 14px;
+}
+
+/* Cart button */
+.wl-card__cart-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #FFF8E1;
+  border: 1.5px solid #F5C518;
+  border-radius: 10px;
+  padding: 9px;
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s, transform 0.12s;
+}
+
+.wl-card__cart-btn i {
+  font-size: 18px;
+  color: #D4A800;
+  transition: color 0.18s;
+}
+
+.wl-card__cart-btn:hover {
+  background: #F5C518;
+  border-color: #E0B000;
+  transform: scale(1.04);
+}
+
+.wl-card__cart-btn:hover i {
+  color: #1a1a1a;
+}
+
+/* More button */
+.wl-card__more-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s;
+  padding: 0;
+}
+
+.wl-card__more-btn:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.wl-card__more-dots {
+  font-size: 14px;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 1px;
+  line-height: 1;
+}
+
+/* ══════════════════════════════════════════════════════
+   EMPTY STATE
+══════════════════════════════════════════════════════ */
+.wl-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 80px 20px;
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #f0f0f0;
+}
+
+.wl-empty__icon {
+  font-size: 52px;
+  color: #e2e8f0;
+}
+
+.wl-empty__text {
+  font-size: 14px;
+  color: #94a3b8;
+  text-align: center;
+}
