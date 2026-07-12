@@ -17,9 +17,11 @@ import { CategoriesEntity } from '../../categories/entities/category.entity';
 import { OrderStatus } from '../../utils/common/order.enum';
 import { CategoriesService } from '../../categories/services/categories.service';
 import { Express } from 'express';
+import { normalizeError } from '@/utils/errors/normalize-error.util';
 
 @Injectable()
 export class ProductsService {
+  logger: any;
   constructor(
     @InjectRepository(ProductEntity)
     private readonly productRepository: Repository<ProductEntity>,
@@ -49,11 +51,10 @@ export class ProductsService {
 
       return await this.saveProduct(newProduct);
     } catch (error) {
-      throw new InternalServerErrorException(
-        'Failed to create product',
-        error.message,
-      );
-    }
+  const err = normalizeError(error);
+  this.logger.error(err.message, err.stack);         // both are string ✓
+  throw new InternalServerErrorException('Failed to create product');
+}
   }
 
   private async uploadProductImage(imageFile: Express.Multer.File) {
@@ -125,11 +126,24 @@ export class ProductsService {
       product.category = category; // تحديث الفئة
     }
 
-    Object.keys(updateProductDto).forEach((key) => {
-      if (key !== 'categoryId' && updateProductDto[key] !== undefined) {
-        product[key] = updateProductDto[key];
-      }
-    });
+    // Object.keys(updateProductDto).forEach((key) => {
+    //   if (key !== 'categoryId' && updateProductDto[key] !== undefined) {
+    //     product[key] = updateProductDto[key];
+    //   }
+    // });
+    if (updateProductDto.name        !== undefined) product.name        = updateProductDto.name;
+if (updateProductDto.price       !== undefined) product.price       = updateProductDto.price;
+if (updateProductDto.stock       !== undefined) product.stock       = updateProductDto.stock;
+if (updateProductDto.description !== undefined) product.description = updateProductDto.description;
+// Add any other scalar fields from UpdateProductDto here explicitly.
+// categoryId is handled separately because it requires a DB lookup:
+if (updateProductDto.categoryId !== undefined) {
+  const category = await this.categoryRepository.findOne({
+    where: { id: updateProductDto.categoryId },
+  });
+  if (!category) throw new NotFoundException('Category not found');
+  product.category = category;
+}
 
     return this.productRepository.save(product);
   }
@@ -159,12 +173,11 @@ export class ProductsService {
       product.stock += stockAdjustment;
 
       return await this.productRepository.save(product);
-    } catch (error) {
-      throw new InternalServerErrorException(
-        'Failed to update product stock',
-        error.message,
-      );
-    }
+    }catch (error) {
+  const err = normalizeError(error);
+  this.logger.error(err.message, err.stack);
+  throw new InternalServerErrorException('Failed to update product');
+}
   }
 
   async findByCategoryId(categoryId: number): Promise<ProductEntity[]> {
