@@ -17,7 +17,7 @@ export default async function Table({ params }) {
             </tr>
           </thead>
           <tbody>
-            {data.categories.map((category) => (
+            {data?.categories.map((category) => (
               <tr key={category.id}>
                 <td>{category.name}</td>
                 <td>{category.description}</td>
@@ -42,7 +42,7 @@ export default async function Table({ params }) {
         </table>
       </div>
 
-      <Paginate links={data.meta.links} />
+      <Paginate links={data?.meta.links} />
     </>
   );
 }

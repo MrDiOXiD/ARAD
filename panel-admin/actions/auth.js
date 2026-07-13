@@ -16,19 +16,23 @@ async function login(state, formData) {
   }
 
   const data = await postFetchUnauth("/user/login", { email, password });
+console.log(data);
 
   if (data.user) {
-    cookies().set({
+     await cookies().set({
       name: "token",
       value: data.accessToken,
       httpOnly: true,
       path: "/",
       maxAge: 60 * 60 * 24 * 7, // 1 week
     });
+    console.log(12);
+    
 
     return {
       status: data.status,
       message: "شما وارد سیستم شدید",
+      loggedIn: true
     };
   } else {
     return {

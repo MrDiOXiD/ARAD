@@ -21,7 +21,9 @@ import { AuthenticationGuard } from '../../utils/guard/auth.guard';
 import { AuthorizedGuard } from '../../utils/guard/authorized-role.guard';
 import { Roles } from '../../utils/common/Roles.enum';
 import { extractClientIp } from '../../utils/http/extract-client-ip.util';
-
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+@ApiTags('User')
+@ApiBearerAuth()
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}

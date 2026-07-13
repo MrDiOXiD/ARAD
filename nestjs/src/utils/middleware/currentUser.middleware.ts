@@ -6,7 +6,6 @@ import { ConfigService } from '@nestjs/config';
 import { UserService } from '../../users/services/users.service';
 import { UserEntity } from '@/users/entities/user.entity';
 
-// Augment Express Request once — not inline in the middleware file
 declare module 'express' {
   interface Request {
     user?: UserEntity | null;
@@ -14,7 +13,7 @@ declare module 'express' {
 }
 
 interface JwtInterface extends JwtLibPayload {
-  id: string;
+  id: string | number; // <-- 1. Allow id to be string OR number
   email: string;
   username: string;
 }
@@ -42,7 +41,7 @@ export class CurrentUserMiddleware implements NestMiddleware {
 
     const secret = this.configService.get<string>('JWT_SECRET');
     if (!secret) {
-      // Misconfigured server — fail closed, do not proceed
+      console.error('JWT_SECRET is missing from environment variables!'); // Added helper log
       req.user = null;
       return next();
     }
@@ -50,15 +49,16 @@ export class CurrentUserMiddleware implements NestMiddleware {
     try {
       const payload = verify(token, secret) as JwtInterface;
 
-      // Validate the payload has the fields we expect before DB lookup
-      if (!payload?.id || typeof payload.id !== 'string') {
+      // 2. FIXED: Allow either 'string' or 'number' types for the ID
+      if (!payload?.id || (typeof payload.id !== 'string' && typeof payload.id !== 'number')) {
         req.user = null;
         return next();
       }
 
       req.user = await this.userService.findUserById(+payload.id);
-    } catch {
-      // Expired, tampered, or invalid token — treat as unauthenticated
+    } catch (error:any) {
+      // Added log to help you debug in terminal if verification fails
+      console.error('JWT Verification failed:', error.message); 
       req.user = null;
     }
 

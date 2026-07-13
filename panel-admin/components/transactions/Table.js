@@ -18,7 +18,7 @@ export default async function Table({ params }) {
             </tr>
           </thead>
           <tbody>
-            {data.transactions.map((transaction) => (
+            {data?.transactions.map((transaction) => (
               <tr key={transaction.id}>
                 <td>{transaction.order_id}</td>
                 <td>{transaction.status}</td>
@@ -30,7 +30,7 @@ export default async function Table({ params }) {
         </table>
       </div>
 
-      <Paginate links={data.meta.links} />
+      <Paginate links={data?.meta.links} />
     </>
   );
 }

@@ -16,7 +16,7 @@ export default function Paginate({ links }) {
   return (
     <nav className="d-flex justify-content-center mt-5">
       <ul className="pagination">
-        {links.slice(1, -1).map((link, index) => (
+        {links?.slice(1, -1).map((link, index) => (
           <li key={index} className={link.active ? "page-item active" : "page-item"}>
             <button onClick={() => handlePage(link.label)} className="page-link">
               {link.label}

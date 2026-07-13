@@ -2,8 +2,12 @@ import Loading from "@/components/Loading";
 import Table from "@/components/transactions/Table";
 import { Suspense } from "react";
 
-export default function TransactionsPage({ searchParams }) {
-  const params = new URLSearchParams(searchParams);
+export default async function TransactionsPage({ searchParams }) {
+// 1. Await the promise to get the actual plain object
+   const resolvedParams = await searchParams;
+
+   // 2. Now you can safely pass it to URLSearchParams
+   const params = new URLSearchParams(resolvedParams);
 
   return (
     <>

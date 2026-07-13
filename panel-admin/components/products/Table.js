@@ -23,7 +23,7 @@ export default async function Table({ params }) {
             </tr>
           </thead>
           <tbody>
-            {data.products.map((product) => (
+            {data?.products.map((product) => (
               <tr key={product.id}>
                 <td>
                   <Image
@@ -61,7 +61,7 @@ export default async function Table({ params }) {
         </table>
       </div>
 
-      <Paginate links={data.meta.links} />
+      <Paginate links={data?.meta.links} />
     </>
   );
 }

@@ -3,10 +3,12 @@ import Table from "@/components/users/Table";
 import Link from "next/link";
 import { Suspense } from "react";
 
-export default function UsersPage({ searchParams }) {
-  console.log(21);
+export default async function UsersPage({ searchParams }) {
+// 1. Await the promise to get the actual plain object
+   const resolvedParams = await searchParams;
 
-  const params = new URLSearchParams(searchParams);
+   // 2. Now you can safely pass it to URLSearchParams
+   const params = new URLSearchParams(resolvedParams);
 
   return (
     <>

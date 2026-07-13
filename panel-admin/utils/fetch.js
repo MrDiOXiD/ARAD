@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { json } from "node:stream/consumers";
 
 const getFetch = async (url) => {
   const token = cookies().get("token");
@@ -45,6 +46,8 @@ const postFetchUnauth = async (url, body) => {
     },
     body: JSON.stringify(body),
   });
+console.log(body);
+
 
   return await res.json();
 };

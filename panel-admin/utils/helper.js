@@ -7,15 +7,27 @@ const numberFormat = (number) => {
 };
 
 const handleError = (message) => {
-  if (typeof message === "object") {
+  // typeof null is "object", so we must explicitly check for it
+  if (message && typeof message === "object") {
     const errors = [];
-    Object.keys(message).map((key) => {
-      message[key].map((e) => {
-        errors.push(e);
-      });
+
+    Object.keys(message).forEach((key) => {
+      const value = message[key];
+
+      if (Array.isArray(value)) {
+        // If it's an array, push all elements
+        errors.push(...value);
+      } else if (typeof value === "string") {
+        // If it's a single string, push it directly
+        errors.push(value);
+      } else if (value && typeof value === "object") {
+        // Optional: handle nested objects recursively
+        errors.push(handleError(value));
+      }
     });
 
-    return errors.join();
+    // Join with a comma and space for readability
+    return errors.join(", ");
   }
 
   return message;

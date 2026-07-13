@@ -19,7 +19,7 @@ export default async function Table({ params }) {
             </tr>
           </thead>
           <tbody>
-            {data.coupons.map((coupon) => (
+            {data?.coupons.map((coupon) => (
               <tr key={coupon.id}>
                 <td>{coupon.code}</td>
                 <td>{coupon.percentage}</td>
@@ -46,7 +46,7 @@ export default async function Table({ params }) {
         </table>
       </div>
 
-      <Paginate links={data.meta.links} />
+      <Paginate links={data?.meta.links} />
     </>
   );
 }

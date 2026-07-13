@@ -19,7 +19,7 @@ export default async function Table({ params }) {
             </tr>
           </thead>
           <tbody>
-            {data.users.map((user) => (
+            {data?.users.map((user) => (
               <tr key={user.id}>
                 <td>{user.name}</td>
                 <td>{user.email}</td>
@@ -43,7 +43,7 @@ export default async function Table({ params }) {
         </table>
       </div>
 
-      <Paginate links={data.meta.links} />
+      <Paginate links={data?.meta.links} />
     </>
   );
 }
