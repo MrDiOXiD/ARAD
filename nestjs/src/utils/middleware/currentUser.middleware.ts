@@ -1,59 +1,67 @@
-/* eslint-disable prettier/prettier */
-import { Injectable, InternalServerErrorException, NestMiddleware } from "@nestjs/common";
-import { Request, Response, NextFunction } from "express";
-import { verify } from "jsonwebtoken";
-import { ConfigService } from "@nestjs/config"; // Import ConfigService
-import { UserService } from "../../users/services/users.service";
-import { UserEntity } from "../../users/entities/user.entity";
+import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Request, Response, NextFunction } from 'express';
+import { verify, JwtPayload as JwtLibPayload } from 'jsonwebtoken';
+import { ConfigService } from '@nestjs/config';
 
-declare module "express" {
+import { UserService } from '../../users/services/users.service';
+import { UserEntity } from '@/users/entities/user.entity';
+
+// Augment Express Request once — not inline in the middleware file
+declare module 'express' {
   interface Request {
     user?: UserEntity | null;
   }
 }
 
+interface JwtInterface extends JwtLibPayload {
+  id: string;
+  email: string;
+  username: string;
+}
+
 @Injectable()
 export class CurrentUserMiddleware implements NestMiddleware {
-  constructor(private configService: ConfigService, private userService: UserService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly userService: UserService,
+  ) {}
 
-  async use(req: Request, res: Response, next: NextFunction) {
-    const secretKey = this.configService.get<string>("JWT_SECRET");
-    const authHeaders = req.headers.authorization;
+  async use(req: Request, _res: Response, next: NextFunction): Promise<void> {
+    const authHeader = req.headers.authorization;
 
-    // ✅ DO NOT send response here
-    if (!authHeaders) {
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
       req.user = null;
-      return next(); // 🔥 just continue
+      return next();
+    }
+
+    const token = authHeader.slice(7); // strip "Bearer "
+    if (!token) {
+      req.user = null;
+      return next();
+    }
+
+    const secret = this.configService.get<string>('JWT_SECRET');
+    if (!secret) {
+      // Misconfigured server — fail closed, do not proceed
+      req.user = null;
+      return next();
     }
 
     try {
-      const token = authHeaders.split(" ")[1];
+      const payload = verify(token, secret) as JwtInterface;
 
-      //broken code
-      // const { id } = verify(token, secretKey) as JwtInterface;
-      const secret = this.configService.get<string>("JWT_SECRET");
-      if (!secret) throw new InternalServerErrorException("JWT secret not configured");
-
-      let payload: JwtInterface;
-      try {
-        payload = verify(token, secret) as unknown as JwtInterface;
-      } catch {
+      // Validate the payload has the fields we expect before DB lookup
+      if (!payload?.id || typeof payload.id !== 'string') {
         req.user = null;
         return next();
       }
-      const { id } = payload;
-      const currentUser = await this.userService.findUserById(+id);
-      req.user = currentUser;
 
-      return next();
-    } catch (error) {
+      req.user = await this.userService.findUserById(+payload.id);
+    } catch {
+      // Expired, tampered, or invalid token — treat as unauthenticated
       req.user = null;
-      console.log(req);
-
-      return next();
     }
+
+    return next();
   }
-}
-interface JwtInterface {
-  id: string;
 }

@@ -16,10 +16,15 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "incremental": true,
+    "baseUrl": "./",
     "paths": {
       "@/*": ["./src/*"]
     }
   },
   "include": ["src/**/*", "src/utils/types/**/*.d.ts"],
-  "exclude": ["node_modules", "dist"]
-}
+"exclude": [
+  "node_modules",
+  "dist",
+  "**/*-old.*",
+  "**/*-old/**"
+]}

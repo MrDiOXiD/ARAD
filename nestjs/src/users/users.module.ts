@@ -1,14 +1,13 @@
-import { Module, forwardRef } from '@nestjs/common';
-import { UserService } from './services/users.service';
-import { UserController } from './controller/users.controller';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserEntity } from './entities/user.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { AuditModule } from '../audit/audit.module';
-import { AuditService } from '../audit/audit.services';
 
+import { UserService } from './services/users.service';
+import { UserController } from './controller/users.controller';
+import { AuditModule } from '../audit/audit.module';
+import { UserEntity } from './entities/user.entity';
 
 @Module({
   imports: [
@@ -16,15 +15,19 @@ import { AuditService } from '../audit/audit.services';
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'),
-      }),
+      useFactory: (configService: ConfigService) => {
+        const secret = configService.get<string>('JWT_SECRET');
+        if (!secret) throw new Error('JWT_SECRET env var is not set');
+        return { secret, signOptions: { expiresIn: '1h' } };
+      },
       inject: [ConfigService],
     }),
     ConfigModule,
-    forwardRef(() => AuditModule),
+    // Import AuditModule so its exported AuditService is available here
+    // No forwardRef needed — AuditModule doesn't depend on UsersModule
+    AuditModule,
   ],
-  providers: [UserService, AuditService],
+  providers: [UserService],           // AuditService comes from AuditModule
   exports: [UserService, PassportModule, JwtModule],
   controllers: [UserController],
 })

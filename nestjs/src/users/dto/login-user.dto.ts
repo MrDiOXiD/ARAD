@@ -1,20 +1,25 @@
-/* eslint-disable prettier/prettier */
 import {
-    IsEmail,
-    IsNotEmpty,
-    IsString,
-    MaxLength,
-    MinLength,
-  } from 'class-validator';
-  export class LoginUserDto {
-    @IsString({ message: 'email must be string' })
-    @IsNotEmpty({ message: 'email is required' })
-    @IsEmail({}, { message: 'Invalid email' })
-    email!: string;
-    @IsString({ message: 'password must be string' })
-    @IsNotEmpty({ message: 'password is required' })
-    @MinLength(3, { message: 'Min Length is 3' })
-    @MaxLength(20, { message: 'Max Length is 20' })
-    password!: string;
-  }
-  
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  Matches,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
+
+export class LoginUserDto {
+  @IsString()
+  @IsNotEmpty()
+  @IsEmail({}, { message: 'Invalid email address' })
+  email!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(8, { message: 'Password must be at least 8 characters' })
+  @MaxLength(72, { message: 'Password must not exceed 72 characters' }) // bcrypt hard limit
+  // Enforce at least one letter and one digit — matches OWASP basic complexity
+  @Matches(/^(?=.*[A-Za-z])(?=.*\d).+$/, {
+    message: 'Password must contain at least one letter and one number',
+  })
+  password!: string;
+}

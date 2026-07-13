@@ -11,13 +11,13 @@ import { OrderEntity } from '../entities/order.entity';
 import { ShippingEntity } from '../entities/shipping.entity';
 import { OrderProductDto } from '../dto/order-product.dto';
 import { UpdateOrderStatus } from '../dto/update-order-status.dto';
-import { ProductEntity } from '../../products/entities/product.entity';
-import { UserEntity } from '../../users/entities/user.entity';
+import { UserEntity } from '@/users/entities/user.entity';
 import { AuditService } from '../../audit/audit.services';
-import { ProductsService } from '../../products/services/products.service';
 import { OrderStatus } from '../../utils/common/order.enum';
 import { normalizeError } from '../../utils/errors/normalize-error.util';
 import { CreateShippingDto } from '../dto/shipping.dto';
+import { ProductEntity } from '@/products/entities/product.entity';
+import { ProductsService } from '@/products/services/products.service';
 
 @Injectable()
 export class OrdersService {

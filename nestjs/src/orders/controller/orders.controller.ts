@@ -11,11 +11,11 @@ import {
 import { OrdersService } from '../services/orders.service';
 import { CreateOrderDto } from '../dto/create-order.dto';
 import { UpdateOrderStatus } from '../dto/update-order-status.dto';
-import { UserEntity } from '../../users/entities/user.entity';
 import { CurrentUser } from '../../utils/decorators/currentUser.decorator';
 import { AuthenticationGuard } from '../../utils/guard/auth.guard';
 import { Roles } from '../../utils/common/Roles.enum';
 import { AuthorizedGuard } from '../../utils/guard/authorized-role.guard';
+import { UserEntity } from '@/users/entities/user.entity';
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}

@@ -1,8 +1,7 @@
-
 import {
-  Injectable,
   CanActivate,
   ExecutionContext,
+  Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
@@ -10,31 +9,21 @@ import { IS_PUBLIC_KEY } from '../decorators/authPublic.decorators';
 
 @Injectable()
 export class AuthenticationGuard implements CanActivate {
-  constructor(private reflector: Reflector) {}
+  constructor(private readonly reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    
-    const isPublic = this.reflector.getAllAndOverride<boolean>(
-      IS_PUBLIC_KEY,
-      [
-        context.getHandler(),
-        context.getClass(),
-      ],
-    );
-    
-    // ✅ THIS is what you're missing
-    if (isPublic) {
-      return true;
-    }
-    
-    const request = context.switchToHttp().getRequest();
-    
-    if (!request.user) {
-      throw new UnauthorizedException('no token');
-    }
-    console.log('USER:', request.user);  
-    console.log('isPublic:', isPublic);
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
 
-  return true;
+    if (isPublic) return true;
+
+    const request = context.switchToHttp().getRequest();
+    if (!request.user) {
+      throw new UnauthorizedException('Authentication required');
+    }
+
+    return true;
   }
 }

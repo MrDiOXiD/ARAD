@@ -5,10 +5,10 @@ import { OrderEntity } from './entities/order.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ShippingEntity } from './entities/shipping.entity';
 import { OrderProductsEntity } from './entities/order-product.entity';
-import { ProductEntity } from '../products/entities/product.entity';
-import { ProductsModule } from '../products/products.module';
 import { AuditModule } from '../audit/audit.module';
 import { AuditService } from '../audit/audit.services';
+import { ProductEntity } from '@/products/entities/product.entity';
+import { ProductsModule } from '@/products/products.module';
 
 
 @Module({

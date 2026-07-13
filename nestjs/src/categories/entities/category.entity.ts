@@ -9,8 +9,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { UserEntity } from '../../users/entities/user.entity';
-import { ProductEntity } from '../../products/entities/product.entity';
+import { UserEntity } from '@/users/entities/user.entity';
+import { ProductEntity } from '@/products/entities/product.entity';
 
 @Entity({ name: 'categories' })
 export class CategoriesEntity {

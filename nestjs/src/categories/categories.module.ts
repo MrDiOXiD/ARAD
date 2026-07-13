@@ -6,7 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CategoriesEntity } from './entities/category.entity';
 import { MulterModule } from '@nestjs/platform-express';
 import { multerConfig } from '../utils/middleware/multer';
-import { ProductsModule } from '../products/products.module';
+import { ProductsModule } from '@/products/products.module';
 
 
 @Module({

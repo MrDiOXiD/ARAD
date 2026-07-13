@@ -1,8 +1,6 @@
-/* eslint-disable prettier/prettier */
 export enum OrderStatus {
-  PROCESSING = 'proccessing',
-    SHIPPED = 'shipped',
-    DELIVERED = 'delivered',
-    CANCELLED = 'canclled'
-  }
-  
+  PROCESSING = 'processing',  // was 'proccessing'
+  SHIPPED    = 'shipped',
+  DELIVERED  = 'delivered',
+  CANCELLED  = 'cancelled',   // was 'canclled'
+}

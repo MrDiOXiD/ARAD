@@ -2,222 +2,188 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateProductDto } from '../dto/create-product.dto';
-import { UpdateProductDto } from '../dto/update-product.dto';
-import * as cloudinary from 'cloudinary';
-import { ProductEntity } from '../entities/product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as cloudinary from 'cloudinary';
 
+import { ProductEntity } from '../entities/product.entity';
+import { CreateProductDto } from '../dto/create-product.dto';
 
-import { UserEntity } from '../../users/entities/user.entity';
 import { CategoriesEntity } from '../../categories/entities/category.entity';
-import { OrderStatus } from '../../utils/common/order.enum';
 import { CategoriesService } from '../../categories/services/categories.service';
-import { Express } from 'express';
-import { normalizeError } from '@/utils/errors/normalize-error.util';
+import { OrderStatus } from '../../utils/common/order.enum';
+import { normalizeError } from '../../utils/errors/normalize-error.util';
+import { UpdateProductDto } from '../dto/update-product.dto';
+import { UserEntity } from '@/users/entities/user.entity';
 
 @Injectable()
 export class ProductsService {
-  logger: any;
+  private readonly logger = new Logger(ProductsService.name);
+
   constructor(
     @InjectRepository(ProductEntity)
     private readonly productRepository: Repository<ProductEntity>,
     private readonly categoriesService: CategoriesService,
   ) {}
+
+  // ── Create ────────────────────────────────────────────────────────────────
+
   async createProduct(
-    createProductDto: CreateProductDto,
+    dto: CreateProductDto,
     productImage: Express.Multer.File,
     currentUser: UserEntity,
-  ) {
+  ): Promise<ProductEntity> {
     try {
-      const category = await this.categoriesService.findCategoryById(
-        +createProductDto.categoryId,
-      );
+      const category = await this.categoriesService.findCategoryById(+dto.categoryId);
+      const { secure_url, public_id } = await this.uploadProductImage(productImage);
 
-      const { secure_url, public_id } = await this.uploadProductImage(
-        productImage,
-      );
-
-      const newProduct = this.createProductEntity(
-        createProductDto,
+      const product = this.productRepository.create({
+        title:        dto.title,
+        description:  dto.description,
+        price:        dto.price,
+        stock:        dto.stock,
         category,
-        currentUser,
-        secure_url,
-        public_id,
-      );
+        createdBy:    currentUser,
+        productImage: secure_url,
+        imagePublicId: public_id,
+      });
 
-      return await this.saveProduct(newProduct);
+      return this.productRepository.save(product);
     } catch (error) {
-  const err = normalizeError(error);
-  this.logger.error(err.message, err.stack);         // both are string ✓
-  throw new InternalServerErrorException('Failed to create product');
-}
-  }
-
-  private async uploadProductImage(imageFile: Express.Multer.File) {
-    try {
-      const uploadedImage = await cloudinary.v2.uploader.upload(
-        imageFile.path,
-        {
-          folder: 'product_images',
-        },
-      );
-
-      return uploadedImage;
-    } catch (error) {
-      throw new Error('Error uploading image to Cloudinary');
+      if (
+        error instanceof NotFoundException ||
+        error instanceof BadRequestException ||
+        error instanceof InternalServerErrorException
+      ) {
+        throw error; // re-throw known HTTP exceptions as-is
+      }
+      const err = normalizeError(error);
+      this.logger.error(err.message, err.stack);
+      throw new InternalServerErrorException('Failed to create product');
     }
   }
 
-  private createProductEntity(
-    createProductDto: CreateProductDto,
-    category: CategoriesEntity,
-    currentUser: UserEntity,
-    productImageUrl: string,
-    imagePublicId: string,
-  ): ProductEntity {
-    return this.productRepository.create({
-      title: createProductDto.title,
-      description: createProductDto.description,
-      price: createProductDto.price,
-      stock: createProductDto.stock,
-      category,
-      createdBy: currentUser,
-      productImage: productImageUrl,
-      imagePublicId,
-    });
-  }
+  // ── Read ──────────────────────────────────────────────────────────────────
 
-  async saveProduct(product: ProductEntity) {
-    return await this.productRepository.save(product);
-  }
-
-  async findOne(id: number) {
+  async findOne(id: number): Promise<ProductEntity> {
     const product = await this.productRepository.findOne({
       where: { id },
       relations: { createdBy: true, category: true },
     });
-
-    if (!product) {
-      throw new NotFoundException('Product Not Found');
-    }
-
+    if (!product) throw new NotFoundException(`Product ${id} not found`);
     return product;
   }
 
   async findAll(page = 1, limit = 10): Promise<ProductEntity[]> {
     const skip = (page - 1) * limit;
-    return await this.productRepository.find({
-      skip,
-      take: limit,
-    });
+    return this.productRepository.find({ skip, take: limit });
   }
 
-  async update(id: number, updateProductDto: UpdateProductDto) {
+  async findByCategoryId(categoryId: number): Promise<ProductEntity[]> {
+    return this.productRepository.find({ where: { categoryId } });
+  }
+
+  // ── Update ────────────────────────────────────────────────────────────────
+
+  async update(id: number, dto: UpdateProductDto): Promise<ProductEntity> {
     const product = await this.findOne(id);
 
-    if (updateProductDto.categoryId) {
-      const category = await this.categoriesService.findCategoryById(
-        updateProductDto.categoryId,
-      );
-      product.category = category; // تحديث الفئة
-    }
+    // ── Scalar fields: use actual ProductEntity property names ──
+    // ERROR WAS HERE: 'name' does not exist — the field is 'title'
+    if (dto.title       !== undefined) product.title       = dto.title;
+    if (dto.price       !== undefined) product.price       = dto.price;
+    if (dto.stock       !== undefined) product.stock       = dto.stock;
+    if (dto.description !== undefined) product.description = dto.description;
 
-    // Object.keys(updateProductDto).forEach((key) => {
-    //   if (key !== 'categoryId' && updateProductDto[key] !== undefined) {
-    //     product[key] = updateProductDto[key];
-    //   }
-    // });
-    if (updateProductDto.name        !== undefined) product.name        = updateProductDto.name;
-if (updateProductDto.price       !== undefined) product.price       = updateProductDto.price;
-if (updateProductDto.stock       !== undefined) product.stock       = updateProductDto.stock;
-if (updateProductDto.description !== undefined) product.description = updateProductDto.description;
-// Add any other scalar fields from UpdateProductDto here explicitly.
-// categoryId is handled separately because it requires a DB lookup:
-if (updateProductDto.categoryId !== undefined) {
-  const category = await this.categoryRepository.findOne({
-    where: { id: updateProductDto.categoryId },
-  });
-  if (!category) throw new NotFoundException('Category not found');
-  product.category = category;
-}
+    // ── Category: delegate to categoriesService — no categoryRepository needed ──
+    // ERROR WAS HERE: this.categoryRepository does not exist on ProductsService
+    if (dto.categoryId !== undefined) {
+      const category = await this.categoriesService.findCategoryById(dto.categoryId);
+      product.category   = category;
+      product.categoryId = category.id;
+    }
 
     return this.productRepository.save(product);
   }
 
-  async delete(id: number) {
-    const product = await this.findOne(id);
-    if (product.imagePublicId) {
-      await cloudinary.v2.uploader.destroy(product.imagePublicId);
-    }
-    await this.productRepository.remove(product);
-    return {
-      message: `Product Deleted Sucessfully with Id : ${id}`,
-    };
-  }
-
-  async updateStock(id: number, stockChange: number, status: string) {
+  async updateStock(
+    id: number,
+    stockChange: number,
+    status: string,
+  ): Promise<ProductEntity> {
     try {
       const product = await this.findOne(id);
 
-      const stockAdjustment =
-        status === OrderStatus.DELIVERED ? -stockChange : stockChange;
+      const adjustment = status === OrderStatus.DELIVERED ? -stockChange : stockChange;
 
-      if (product.stock + stockAdjustment < 0) {
+      if (product.stock + adjustment < 0) {
         throw new BadRequestException('Insufficient stock available');
       }
 
-      product.stock += stockAdjustment;
-
-      return await this.productRepository.save(product);
-    }catch (error) {
-  const err = normalizeError(error);
-  this.logger.error(err.message, err.stack);
-  throw new InternalServerErrorException('Failed to update product');
-}
-  }
-
-  async findByCategoryId(categoryId: number): Promise<ProductEntity[]> {
-    return this.productRepository.find({
-      where: { categoryId },
-    });
+      product.stock += adjustment;
+      return this.productRepository.save(product);
+    } catch (error) {
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
+        throw error;
+      }
+      const err = normalizeError(error);
+      this.logger.error(err.message, err.stack);
+      throw new InternalServerErrorException('Failed to update stock');
+    }
   }
 
   async updateProductsByCategoryId(
     categoryId: number,
     category: CategoriesEntity,
   ): Promise<void> {
-    const productsToUpdate = await this.findByCategoryId(categoryId);
+    const products = await this.findByCategoryId(categoryId);
+    if (products.length === 0) return; // nothing to update — not an error
 
-    if (productsToUpdate.length === 0) {
-      throw new NotFoundException('No products found for this category');
-    }
-
-    productsToUpdate.forEach((product) => {
-      product.category = category; // Set the new category
-    });
-
-    await this.productRepository.save(productsToUpdate);
+    products.forEach((p) => { p.category = category; });
+    await this.productRepository.save(products);
   }
 
-  async removeCategoryFromProductsByCategoryId(
-    categoryId: number,
-  ): Promise<void> {
-    const productsToUpdate = await this.productRepository.find({
-      where: { categoryId },
-    });
+  async removeCategoryFromProductsByCategoryId(categoryId: number): Promise<void> {
+    const products = await this.productRepository.find({ where: { categoryId } });
+    if (products.length === 0) return;
 
-    if (productsToUpdate.length === 0) {
-      throw new NotFoundException('No products found for this category');
+    products.forEach((p) => { p.categoryId = null; });
+    await this.productRepository.save(products);
+  }
+
+  // ── Delete ────────────────────────────────────────────────────────────────
+
+  async delete(id: number): Promise<{ message: string }> {
+    const product = await this.findOne(id);
+
+    if (product.imagePublicId) {
+      await cloudinary.v2.uploader.destroy(product.imagePublicId);
     }
 
-    productsToUpdate.forEach((product) => {
-      product.categoryId = null;
-    });
+    await this.productRepository.remove(product);
+    return { message: `Product ${id} deleted successfully` };
+  }
 
-    await this.productRepository.save(productsToUpdate);
+  async saveProduct(product: ProductEntity): Promise<ProductEntity> {
+    return this.productRepository.save(product);
+  }
+
+  // ── Private helpers ───────────────────────────────────────────────────────
+
+  private async uploadProductImage(
+    imageFile: Express.Multer.File,
+  ): Promise<{ secure_url: string; public_id: string }> {
+    try {
+      return await cloudinary.v2.uploader.upload(imageFile.path, {
+        folder: 'product_images',
+      });
+    } catch (error) {
+      const err = normalizeError(error);
+      this.logger.error(`Cloudinary upload failed: ${err.message}`, err.stack);
+      throw new InternalServerErrorException('Image upload failed');
+    }
   }
 }
