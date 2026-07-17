@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
-import { useFormState } from "react-dom";
 import SubmitButton from "@/components/SubmitButton";
 import { useRouter } from "next/navigation";
 import { createProduct } from "@/actions/products";
@@ -16,7 +15,7 @@ import TimePicker from "react-multi-date-picker/plugins/time_picker";
 import DatePanel from "react-multi-date-picker/plugins/date_panel";
 
 export default function CreateProduct({ categories }) {
-  const [state, formAction] = useFormState(createProduct, {});
+  const [state, formAction] = useActionState(createProduct, {});
   const router = useRouter();
   const [image, setImage] = useState(null);
   const primaryImageRef = useRef();
@@ -97,9 +96,9 @@ export default function CreateProduct({ categories }) {
           <option value="" disabled>
             انتخاب دسته بندی
           </option>
-          {categories.map((item) => (
+          {categories?.map((item) => (
             <option key={item.id} value={item.id}>
-              {item.name}
+              {item.title}
             </option>
           ))}
         </select>
@@ -139,9 +138,19 @@ export default function CreateProduct({ categories }) {
           format="YYYY-MM-DD HH:mm:ss"
           plugins={[<TimePicker position="bottom" />, <DatePanel markFocused />]}
         />
+        {/* Line 142 */}
+        <input
+          name="date_on_sale_from"
+          value={dateOnSale[0] ?? ""} // Fallback to "" if undefined
+          type="hidden"
+        />
 
-        <input name="date_on_sale_from" value={dateOnSale[0]} type="hidden" />
-        <input name="date_on_sale_to" value={dateOnSale[1]} type="hidden" />
+        {/* Line 143 */}
+        <input
+          name="date_on_sale_to"
+          value={dateOnSale[1] ?? ""} // Fallback to "" if undefined
+          type="hidden"
+        />
       </div>
 
       <div className="col-md-12">

@@ -29,6 +29,22 @@ export class ProductEntity {
   @Column()
   stock!: number;
 
+// 1. Add ! here since we have a default value of 0 in Postgres
+  @Column({ type: 'decimal', precision: 5, scale: 2, default: 0 })
+  discount!: number; 
+
+  // 2. Add ! and declare it can be Date or null (since nullable: true)
+  @Column({ type: 'timestamp', nullable: true })
+  discountStartDate!: Date | null;
+
+  @Column({ type: 'timestamp', nullable: true })
+  discountEndDate!: Date | null;
+
+  // 3. Add ! here since we have a default value of true
+  @Column({ type: 'boolean', default: true })
+  isActive!: boolean;
+  
+
   @Column({ nullable: true })
   productImage!: string;
 

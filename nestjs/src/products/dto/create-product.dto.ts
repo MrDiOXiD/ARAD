@@ -1,14 +1,21 @@
+// src/products/dto/create-product.dto.ts
+
 import {
+  IsBoolean,
+  IsDate,
   IsInt,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsPositive,
   IsString,
+  Max,
   MaxLength,
   Min,
   MinLength,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+// 1. Add "Transform" to your class-transformer imports
+import { Type, Transform } from 'class-transformer';
 
 export class CreateProductDto {
   @IsString()
@@ -23,8 +30,6 @@ export class CreateProductDto {
   @MaxLength(500)
   description!: string;
 
-  // When sent as multipart/form-data all fields arrive as strings.
-  // @Type(() => Number) + @IsNumber() handles the coercion safely.
   @Type(() => Number)
   @IsNumber({ maxDecimalPlaces: 2 })
   @IsPositive()
@@ -39,4 +44,34 @@ export class CreateProductDto {
   @IsInt()
   @IsPositive()
   categoryId!: number;
+
+  // 2. 👇 NEW: Discount Percentage (e.g., 10 for 10% off)
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @Min(0)
+  @Max(100)
+  discount?: number;
+
+  // 3. 👇 NEW: Discount Start Date
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  discountStartDate?: Date;
+
+  // 4. 👇 NEW: Discount End Date
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  discountEndDate?: Date;
+
+  // 5. 👇 NEW: Active Status (converts "true"/"false" strings safely to boolean)
+  @IsOptional()
+  @Transform(({ value }) => {
+    if (value === 'true' || value === 1 || value === '1') return true;
+    if (value === 'false' || value === 0 || value === '0') return false;
+    return value;
+  })
+  @IsBoolean()
+  isActive?: boolean;
 }

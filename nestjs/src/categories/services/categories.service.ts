@@ -4,6 +4,7 @@ import {
   HttpStatus,
   Inject,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateCategoryDto } from '../dto/create-category.dto';
@@ -22,6 +23,7 @@ export class CategoriesService {
     @Inject(forwardRef(() => ProductsService))
     private readonly productService: ProductsService,
   ) {}
+    private readonly logger = new Logger(CategoriesService.name)
 
   async create(
     createCategoryDto: CreateCategoryDto,
@@ -31,6 +33,18 @@ export class CategoriesService {
     const newCategory = this.categoriesRepository.create({
       ...createCategoryDto,
       imageUrl: uploadedImage.public_id,
+    });
+    return await this.categoriesRepository.save(newCategory);
+  }
+
+async createCategories(
+    createCategoryDto: CreateCategoryDto,
+  ) {
+this.logger.log(`Creating new category: ${JSON.stringify(createCategoryDto)}`);    
+    const newCategory = this.categoriesRepository.create({
+      ...createCategoryDto,
+      title: createCategoryDto.title,
+      description: createCategoryDto.description,
     });
     return await this.categoriesRepository.save(newCategory);
   }

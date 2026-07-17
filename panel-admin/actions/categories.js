@@ -6,10 +6,12 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 async function createCategory(state, formData) {
-  const name = formData.get("name");
+  const title = formData.get("name");
   const description = formData.get("description");
 
-  if (name === "") {
+
+  
+  if (title === "") {
     return {
       status: "error",
       message: "فیلد نام الزامی است",
@@ -23,7 +25,7 @@ async function createCategory(state, formData) {
     };
   }
 
-  const data = await postFetch("/categories", { name, description });
+  const data = await postFetch("/categories/categorie", { title, description });
 
   if (data.status === "success") {
     revalidatePath("/categories");

@@ -1,14 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
+import { useActionState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { useFormState } from "react-dom";
 import SubmitButton from "@/components/SubmitButton";
 import { useRouter } from "next/navigation";
 import { createCategory } from "@/actions/categories";
 
 export default function CreateCategoryPage() {
-  const [state, formAction] = useFormState(createCategory, {});
+  const [state, formAction] = useActionState(createCategory, {});
   const router = useRouter();
 
   useEffect(() => {

@@ -8,7 +8,6 @@ import {
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ThrottlerModule } from '@nestjs/throttler';
-import * as cloudinary from 'cloudinary';
 
 import { UsersModule } from './users/users.module';
 import { AuditModule } from './audit/audit.module';
@@ -30,31 +29,31 @@ import { OrdersModule } from './orders/orders.module';
 
     UsersModule,
     AuditModule,
-    UsersModule,
     ProductsModule,
     CategoriesModule,
     OrdersModule,
-    // ProductsModule, CategoriesModule, OrdersModule — add back when ready
   ],
-  // ConfigService is already provided globally by ConfigModule — remove duplicate
 })
 export class AppModule implements NestModule, OnModuleInit {
   constructor(private readonly configService: ConfigService) {}
 
-  // OnModuleInit runs after DI is set up — safe place to configure cloudinary
+  // OnModuleInit runs after DI is set up — safe place to validate environment variables
   onModuleInit() {
-    const cloudName  = this.configService.get<string>('CLOUDINARY_CLOUD_NAME');
-    const apiKey     = this.configService.get<string>('CLOUDINARY_API_KEY');
-    const apiSecret  = this.configService.get<string>('CLOUDINARY_API_SECRET');
+    const requiredArvanEnv = [
+      'ARVAN_ENDPOINT',
+      'ARVAN_ACCESS_KEY',
+      'ARVAN_SECRET_KEY',
+      'ARVAN_BUCKET_NAME',
+    ];
 
-    if (!cloudName || !apiKey || !apiSecret) {
-      throw new Error(
-        'Cloudinary config incomplete — set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET',
-      );
-    }
-
-    cloudinary.v2.config({ cloud_name: cloudName, api_key: apiKey, api_secret: apiSecret });
-  }
+    for (const envVar of requiredArvanEnv) {
+      if (!process.env[envVar]) {
+        throw new Error(
+          `ArvanCloud config incomplete — please set ${envVar} in your .env file`,
+        );
+      } // <-- Safely closed the IF statement
+    } // <-- Safely closed the FOR loop
+  } // <-- Safely closed the onModuleInit method
 
   configure(consumer: MiddlewareConsumer) {
     consumer

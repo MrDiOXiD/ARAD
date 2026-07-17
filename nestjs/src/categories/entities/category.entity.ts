@@ -8,24 +8,26 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from 'typeorm';
-import { UserEntity } from '@/users/entities/user.entity';
-import { ProductEntity } from '@/products/entities/product.entity';
+} from "typeorm";
+import { UserEntity } from "@/users/entities/user.entity";
+import { ProductEntity } from "@/products/entities/product.entity";
 
-@Entity({ name: 'categories' })
+@Entity({ name: "categories" })
 export class CategoriesEntity {
   @PrimaryGeneratedColumn()
   id!: number;
   @Column()
   title!: string;
   @Column({ nullable: true })
+  description!: string;
+  @Column({ nullable: true })
   imageUrl!: string;
-  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   createdAt!: Date;
   @UpdateDateColumn({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-    onUpdate: 'CURRENT_TIMESTAMP',
+    type: "timestamp",
+    default: () => "CURRENT_TIMESTAMP",
+    onUpdate: "CURRENT_TIMESTAMP",
   })
   updatedAt!: Date;
   @ManyToOne(() => UserEntity, (user) => user.category)

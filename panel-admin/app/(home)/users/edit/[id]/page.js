@@ -2,7 +2,7 @@ import EditUser from "@/components/users/Edit";
 import { getFetch } from "@/utils/fetch";
 
 export default async function EditUserPage({ params }) {
-  const user = await getFetch(`/users/${params.id}`);
+  const user = await getFetch(`/user/${params.id}`);
 
   return (
     <>

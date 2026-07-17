@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import '../../styles/globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { Suspense } from 'react';
 
 export const metadata: Metadata = {
   title: 'الکتریکی آنلاین',
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-   <>
+   
     <html lang="fa" dir="rtl">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -22,10 +23,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       </head>
       <body className="bg-gray-100 min-h-screen" style={{ fontFamily: 'Vazirmatn, sans-serif', margin: 0 }}>
       <Header />
+      <Suspense>
+
         {children}
+      </Suspense>
         <Footer />
       </body>
     </html>
- </>
+ 
   );
 }

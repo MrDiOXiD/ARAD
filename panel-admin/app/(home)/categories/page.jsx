@@ -4,11 +4,12 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 export default async function CategoriesPage({ searchParams }) {
-// 1. Await the promise to get the actual plain object
-   const resolvedParams = await searchParams;
+  // 1. Await the promise to get the actual plain object
+  const resolvedParams = await searchParams;
 
-   // 2. Now you can safely pass it to URLSearchParams
-   const params = new URLSearchParams(resolvedParams);
+  // 2. Now you can safely pass it to URLSearchParams
+  const params = new URLSearchParams(resolvedParams);
+
 
   return (
     <>

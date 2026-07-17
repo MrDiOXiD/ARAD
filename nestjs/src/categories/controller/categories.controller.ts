@@ -19,7 +19,9 @@ import { CacheTTL } from '@nestjs/cache-manager';
 import { AuthenticationGuard } from '../../utils/guard/auth.guard';
 import { AuthorizedGuard } from '../../utils/guard/authorized-role.guard';
 import { Roles } from '../../utils/common/Roles.enum';
-
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+@ApiTags('categories')
+@ApiBearerAuth()
 @Controller('categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
@@ -33,6 +35,16 @@ export class CategoriesController {
   ) {
     return this.categoriesService.create(createCategoryDto, imageUrl);
   }
+
+//my attempt
+// @UseGuards(AuthenticationGuard, AuthorizedGuard([Roles.ADMIN]))
+  @Post('categorie')
+  async createCategory(
+    @Body() createCategoryDto: CreateCategoryDto,
+  ) {
+    return this.categoriesService.createCategories(createCategoryDto);
+  }
+
 
   @Get()
   @CacheTTL(86400000)

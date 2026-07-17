@@ -6,6 +6,7 @@ import { getBlurDataURL, numberFormat } from "@/utils/helper";
 
 export default async function Table({ params }) {
   const data = await getFetch(`/products?${params}`);
+  console.log(data);
 
   return (
     <>
@@ -23,23 +24,23 @@ export default async function Table({ params }) {
             </tr>
           </thead>
           <tbody>
-            {data?.products.map((product) => (
+            {data?.map((product) => (
               <tr key={product.id}>
                 <td>
                   <Image
-                    src={product.primary_image}
+                    src={product.productImage}
+                    alt={product.title}
+                    width={50}
+                    height={50}
                     placeholder="blur"
-                    blurDataURL={getBlurDataURL()}
-                    width={80}
-                    height={53}
-                    alt="product-image"
+                    blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" // 1x1 grey pixel
                   />
                 </td>
-                <td>{product.name}</td>
-                <td>{product.category}</td>
+                <td>{product.title}</td>
+                <td>{product.categoryId}</td>
                 <td>{numberFormat(product.price)}</td>
-                <td>{product.quantity}</td>
-                <td>{product.status}</td>
+                <td>{product.stock}</td>
+                <td>{product.isActive}</td>
                 <td>
                   <div className="d-flex">
                     <Link
@@ -61,7 +62,7 @@ export default async function Table({ params }) {
         </table>
       </div>
 
-      <Paginate links={data?.meta.links} />
+      {/* <Paginate links={data?.meta.links} /> */}
     </>
   );
 }

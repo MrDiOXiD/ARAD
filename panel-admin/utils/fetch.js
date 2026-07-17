@@ -1,24 +1,34 @@
 import { cookies } from "next/headers";
 import { json } from "node:stream/consumers";
 
+
 const getFetch = async (url) => {
-  const token = cookies().get("token");
+
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+
+  if (!token) {
+    throw new Error("Authorization token is required for this request.");
+  }
+
   const res = await fetch(`${process.env.API_URL}${url}`, {
     cache: "no-store",
+    method: "GET",
     headers: {
-      "Content-Type": "application/json",
       Accept: "application/json",
-      Authorization: `Bearer ${token.value}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 
-  if (res.ok) {
-    const data = await res.json();
-    return data.data;
-  } else {
-    throw new Error(`مشکل در دریافت اطلاعات کد : ${res.status}`);
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || `Secure fetch failed: ${res.status}`);
   }
+
+  return await res.json();
 };
+
+
 
 const postFetch = async (url, body) => {
   const token = cookies().get("token");
@@ -46,7 +56,7 @@ const postFetchUnauth = async (url, body) => {
     },
     body: JSON.stringify(body),
   });
-console.log(body);
+  console.log(body);
 
 
   return await res.json();
