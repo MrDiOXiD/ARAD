@@ -36,37 +36,11 @@ export default async function HomePage() {
   //  'use cache'
   // cacheLife('hours')
 
-
- const getFetchUnauth = async (url:any) => {
-  const res = await fetch(`${"http://localhost:3020"}${url}`, {
-    cache: "no-store", // Ensures Next.js bypasses caching and fetches fresh live data from Postgres
-    method: "GET",
-    headers: {
-      Accept: "application/json",
-    },
-  });
-
-  if (!res.ok) {
-    const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.message || `Failed to fetch: ${res.status}`);
-  }
-
-  return await res.json();
-};
-const cookieStore = await cookies();
-  const token = cookieStore.get("token")?.value;
-const categories = await getFetchUnauth("/categories");  return (
+return (
    
       <main>
         <HeroBanner />
-        <div>
-          <h2>testing all around panel admin database backend and the site</h2>
-          <div>
-        {categories.map((category:any) => (//the type should be identical to its dto
-          <p key={category.id}>{category.title}و {category.description}</p>
-        ))}
-      </div>
-        </div>
+     
         <ProductSection title="جدیدترین‌ها"    products={latestProducts}  scroll />
         <ProductSection title="کالاهای منتخب"  products={featuredProducts} />
       </main>

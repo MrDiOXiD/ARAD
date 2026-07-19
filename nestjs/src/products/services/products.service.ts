@@ -48,12 +48,18 @@ export class ProductsService {
   async createProduct(
     dto: CreateProductDto,
     productImage: Express.Multer.File,
+    galleryImages: Express.Multer.File[],
     currentUser: UserEntity,
   ): Promise<ProductEntity> {
     try {
       const category = await this.categoriesService.findCategoryById(+dto.categoryId);
       const { secure_url, public_id } = await this.uploadProductImage(productImage);
-
+      let galleryUploads: { secure_url: string; public_id: string; }[] = [];
+      if (galleryImages && galleryImages.length > 0) {
+        galleryUploads = await Promise.all(
+          galleryImages.map((file) => this.uploadProductImage(file)),
+        );
+      }
       const product = this.productRepository.create({
         title: dto.title,
         description: dto.description,
@@ -63,10 +69,14 @@ export class ProductsService {
         createdBy: currentUser,
         productImage: secure_url,
         imagePublicId: public_id,
+        gallery: galleryUploads, 
         discount: dto.discount ?? 0,
         discountStartDate: dto.discountStartDate || null,
         discountEndDate: dto.discountEndDate || null,
         isActive: dto.isActive !== undefined ? dto.isActive : true,
+        brand: dto.brand,
+        badge: dto.badge,
+        attributes: dto.attributes,
       });
 
       return this.productRepository.save(product);

@@ -13,10 +13,9 @@ export default async function CreateProductPage() {
     }
   } catch (error) {
     // 3. If the backend fails (500, 401, etc.), log the error but don't crash!
-    console.error("Failed to load categories for the product form:", error.message);
+    // console.error("Failed to load categories for the product form:", error.message);
     categories = []; // Fallback to an empty array so .map() doesn't fail
   }
-  console.log(categories);
   
 
   return (

@@ -6,7 +6,6 @@ import { getBlurDataURL, numberFormat } from "@/utils/helper";
 
 export default async function Table({ params }) {
   const data = await getFetch(`/products?${params}`);
-  console.log(data);
 
   return (
     <>
@@ -34,6 +33,7 @@ export default async function Table({ params }) {
                     height={50}
                     placeholder="blur"
                     blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" // 1x1 grey pixel
+                  // unoptimized // 🌟 This forces your browser (not Node.js) to grab the image directly
                   />
                 </td>
                 <td>{product.title}</td>

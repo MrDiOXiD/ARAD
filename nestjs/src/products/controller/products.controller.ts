@@ -13,8 +13,9 @@ import {
   UploadedFile,
   DefaultValuePipe,
   BadRequestException,
+  UploadedFiles,
 } from "@nestjs/common";
-import { FileInterceptor } from "@nestjs/platform-express";
+import { FileFieldsInterceptor, FileInterceptor } from "@nestjs/platform-express";
 import { CacheTTL } from "@nestjs/cache-manager";
 
 import { ProductsService } from "../services/products.service";
@@ -36,92 +37,94 @@ export class ProductsController {
 
   @UseGuards(AuthenticationGuard, AuthorizedGuard([Roles.ADMIN]))
   @Post()
-  //making swagger able to handle the pictures
-@ApiOperation({ summary: 'Create a new product with optional discounts' })
-  // 2. 👇 Tell Swagger we are sending multipart/form-data
-  @ApiConsumes('multipart/form-data')@ApiBody({
+  @ApiOperation({ summary: "Create a new product with optional discounts" })
+  @ApiConsumes("multipart/form-data")
+  @ApiBody({
     schema: {
-      type: 'object',
-      // Mark only the essential fields as required
-      required: ['title', 'description', 'price', 'stock', 'categoryId', 'productImage'],
+      type: "object",
+      // Ensure only the strictly required fields are listed here
+      required: ["title", "description", "price", "stock", "categoryId", "productImage"],
       properties: {
-        title: { 
-          type: 'string', 
-          minLength: 2, 
-          maxLength: 200, 
-          example: 'Premium Wireless Headphones' 
+        title: { type: "string", example: "لامپ LED حبابی ۹ وات" },
+        description: { type: "string", example: "لامپ کم مصرف با طول عمر بالا" },
+        price: { type: "number", example: 45000 },
+        stock: { type: "number", example: 100 },
+        categoryId: { type: "number", example: 1 },
+        discount: { type: "number", example: 22, description: "Percentage discount" },
+        discountStartDate: { type: "string", format: "date-time" },
+        discountEndDate: { type: "string", format: "date-time" },
+        isActive: { type: "boolean", default: true },
+
+        // 🌟 NEW: Brand
+        brand: {
+          type: "string",
+          example: "پارس شهاب",
+          description: "The manufacturer or brand of the product",
         },
-        description: { 
-          type: 'string', 
-          minLength: 10, 
-          maxLength: 500, 
-          example: 'High-quality over-ear headphones with noise cancellation.' 
+
+        // 🌟 NEW: Badge
+        badge: {
+          type: "string",
+          example: "new",
+          description: "Highlight badge (e.g., new, sale, hot)",
         },
-        price: { 
-          type: 'number', 
-          minimum: 0, 
-          example: 149.99 
+
+        // 🌟 NEW: Dynamic Attributes (JSON String)
+        attributes: {
+          type: "string",
+          example: '{"color": "white", "power": "9W", "warranty": "12 months"}',
+          description: "A JSON-stringified object containing dynamic key-value pairs.",
         },
-        stock: { 
-          type: 'number', 
-          minimum: 0, 
-          example: 25 
-        },
-        categoryId: { 
-          type: 'number', 
-          minimum: 1, 
-          example: 3 
-        },
-        // 🌟 NEW: Discount field (0 to 100%)
-        discount: { 
-          type: 'number', 
-          minimum: 0, 
-          maximum: 100, 
-          default: 0, 
-          example: 15, 
-          description: 'Percentage discount (e.g., 15 for 15% off)' 
-        },
-        // 🌟 NEW: Discount Start Date (ISO-8601 Date format)
-        discountStartDate: { 
-          type: 'string', 
-          format: 'date-time', 
-          example: '2026-07-17T00:00:00.000Z', 
-          description: 'When the discount starts' 
-        },
-        // 🌟 NEW: Discount End Date (ISO-8601 Date format)
-        discountEndDate: { 
-          type: 'string', 
-          format: 'date-time', 
-          example: '2026-07-24T23:59:59.000Z', 
-          description: 'When the discount expires' 
-        },
-        // 🌟 NEW: Active Status (Accepts boolean or "true"/"false" strings)
-        isActive: { 
-          type: 'boolean', 
-          default: true, 
-          example: true, 
-          description: 'Is the product available for customers to view and buy?' 
-        },
-        // 🖼️ The File Upload field (this renders the "Choose File" button)
+
+        // 🖼️ Image Upload
+       // 🖼️ Primary Image (Single)
         productImage: {
           type: 'string',
           format: 'binary',
-          description: 'The product image file to upload to ArvanCloud',
+          description: 'The primary product image',
+        },
+        
+        // 🖼️🖼️ Gallery Images (Array)
+        gallery: {
+          type: 'array',
+          items: {
+            type: 'string',
+            format: 'binary',
+          },
+          description: 'Additional gallery images (Max 5)',
         },
       },
     },
   })
-  // Pass multerConfig directly to the interceptor — not globally via MulterModule
-  @UseInterceptors(FileInterceptor("productImage", multerConfig))
-  async createProduct(
-    @UploadedFile() productImage: Express.Multer.File,
+ @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'productImage', maxCount: 1 },
+      { name: 'gallery', maxCount: 5 },
+    ], multerConfig) 
+  )
+ async createProduct(
+    @UploadedFiles() files: { 
+      productImage?: Express.Multer.File[]; 
+      gallery?: Express.Multer.File[] 
+    },
     @Body() createProductDto: CreateProductDto,
     @CurrentUser() currentUser: UserEntity,
   ): Promise<ProductEntity> {
+    
+    const productImage = files.productImage?.[0];
+    
     if (!productImage) {
-      throw new BadRequestException("Product image is required");
+      throw new BadRequestException("Product primary image is required");
     }
-    return this.productsService.createProduct(createProductDto, productImage, currentUser);
+
+    const galleryImages = files.gallery || []; 
+
+    return this.productsService.createProduct(
+      createProductDto, 
+      productImage, 
+      galleryImages, 
+      currentUser
+    );
   }
 
   @Get()

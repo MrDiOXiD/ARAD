@@ -118,7 +118,7 @@ export default function Header() {
             </Link>
 
             {/* Wishlist */}
-            <Link href="#" className="top-action relative flex flex-col items-center gap-0.5 text-gray-700 no-underline">
+            <Link href="/dashboard" className="top-action relative flex flex-col items-center gap-0.5 text-gray-700 no-underline">
               <span className="action-tip">علاقه‌مندی</span>
               <i className="bi bi-heart text-2xl" />
               <span className="text-[11px] text-gray-500">ایلیا احمد معظم</span>

@@ -46,7 +46,7 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
       transform: true,             // auto-cast primitives (e.g. string → number)
       transformOptions: {
-        enableImplicitConversion: false, // explicit is safer
+        enableImplicitConversion: true, // explicit is safer
       },
     }),
   );
@@ -54,7 +54,7 @@ async function bootstrap() {
   // ── Swagger (non-production only) ─────────────────────────────────────────
   if (process.env.NODE_ENV !== 'production') {
     const swaggerConfig = new DocumentBuilder()
-      .setTitle('Bazar API')
+      .setTitle('Chatra API')
       .setDescription('API documentation')
       .setVersion('1.0')
       .addBearerAuth()

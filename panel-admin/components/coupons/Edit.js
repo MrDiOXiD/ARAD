@@ -21,12 +21,12 @@ export default function EditCoupon({ coupon }) {
     gregorian: coupon.expired_at_gregorian,
   });
 
-  useEffect(() => {
-    toast(state?.message, { type: `${state?.status}` });
-    if (state?.status === "success") {
-      router.push("/coupons");
-    }
-  }, [state]);
+  // useEffect(() => {
+  //   toast(state?.message, { type: `${state?.status}` });
+  //   if (state?.status === "success") {
+  //     router.push("/coupons");
+  //   }
+  // }, [state]);
 
   function changeDateExpire(value) {
     setDateExpire({

@@ -10,7 +10,7 @@ export const multerConfig: MulterModuleOptions = {
 storage: memoryStorage(),
   limits: {
     fileSize: MAX_FILE_SIZE_BYTES,
-    files: 1,
+    files: 6,
   },
   fileFilter: (
     _req: Request,

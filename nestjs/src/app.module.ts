@@ -17,6 +17,7 @@ import { CompressionMiddleware } from './utils/middleware/compression.middleware
 import { ProductsModule } from './products/products.module';
 import { CategoriesModule } from './categories/categories.module';
 import { OrdersModule } from './orders/orders.module';
+import { ReviewsModule } from './reviews/reviews.module';
 
 @Module({
   imports: [
@@ -32,6 +33,8 @@ import { OrdersModule } from './orders/orders.module';
     ProductsModule,
     CategoriesModule,
     OrdersModule,
+    ReviewsModule
+    
   ],
 })
 export class AppModule implements NestModule, OnModuleInit {

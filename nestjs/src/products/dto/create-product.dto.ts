@@ -6,6 +6,7 @@ import {
   IsInt,
   IsNotEmpty,
   IsNumber,
+  IsObject,
   IsOptional,
   IsPositive,
   IsString,
@@ -74,4 +75,32 @@ export class CreateProductDto {
   })
   @IsBoolean()
   isActive?: boolean;
+
+  @IsOptional()
+  @IsString()
+  @IsOptional()
+  @MaxLength(100)
+  brand?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsOptional()
+  @MaxLength(50)
+  badge?: string;
+
+  // 🌟 The parsing magic for multipart/form-data
+  @IsOptional()
+  @Transform(({ value }) => {
+    // If it arrives as a string from FormData, parse it into an object
+    if (typeof value === 'string' && value.trim() !== '') {
+      try {
+        return JSON.parse(value);
+      } catch (error) {
+        return value; // If parsing fails, pass the string so @IsObject can throw an error
+      }
+    }
+    return value;
+  })
+  @IsObject({ message: 'Attributes must be a valid JSON object' })
+  attributes?: Record<string, any>;
 }

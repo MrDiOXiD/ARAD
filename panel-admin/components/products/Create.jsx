@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import SubmitButton from "@/components/SubmitButton";
 import { useRouter } from "next/navigation";
 import { createProduct } from "@/actions/products";
+import ProductExtraAttributes from "./ProductExtraAttributes";
 
 import DatePicker from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
@@ -15,6 +16,7 @@ import TimePicker from "react-multi-date-picker/plugins/time_picker";
 import DatePanel from "react-multi-date-picker/plugins/date_panel";
 
 export default function CreateProduct({ categories }) {
+  
   const [state, formAction] = useActionState(createProduct, {});
   const router = useRouter();
   const [image, setImage] = useState(null);
@@ -126,7 +128,9 @@ export default function CreateProduct({ categories }) {
         <label className="form-label">قیمت حراجی</label>
         <input name="sale_price" type="text" className="form-control" />
       </div>
-
+<div>
+        <ProductExtraAttributes />
+      </div>
       <div className="col-md-3">
         <label className="form-label">تاریخ شروع و پایان حراجی</label>
         <DatePicker
@@ -161,6 +165,7 @@ export default function CreateProduct({ categories }) {
       <div>
         <SubmitButton title="ایجاد محصول" style="btn btn-outline-dark mt-3 mb-5" />
       </div>
+      
     </form>
   );
 }

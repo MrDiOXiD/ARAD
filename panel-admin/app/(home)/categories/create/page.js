@@ -1,21 +1,21 @@
 "use client";
 
 import { useActionState, useEffect } from "react";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
 import SubmitButton from "@/components/SubmitButton";
 import { useRouter } from "next/navigation";
 import { createCategory } from "@/actions/categories";
 
 export default function CreateCategoryPage() {
   const [state, formAction] = useActionState(createCategory, {});
-  const router = useRouter();
+  // const router = useRouter();
 
-  useEffect(() => {
-    toast(state?.message, { type: `${state?.status}` });
-    if (state?.status === "success") {
-      router.push("/categories");
-    }
-  }, [state]);
+  // useEffect(() => {
+  //   toast(state?.message, { type: `${state?.status}` });
+  //   // if (state?.status === "success") {
+  //   //   router.push("/categories");
+  //   // }
+  // }, [state]);
 
   return (
     <>

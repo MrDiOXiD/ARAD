@@ -18,12 +18,12 @@ export default function CreateCouponPage() {
   const router = useRouter();
   const [dateExpire, setDateExpire] = useState("");
 
-  useEffect(() => {
-    toast(state?.message, { type: `${state?.status}` });
-    if (state?.status === "success") {
-      router.push("/coupons");
-    }
-  }, [state]);
+  // useEffect(() => {
+  //   toast(state?.message, { type: `${state?.status}` });
+  //   if (state?.status === "success") {
+  //     router.push("/coupons");
+  //   }
+  // }, [state]);
 
   function changeDateExpire(value) {
     setDateExpire(value.convert(gregorian, gregorian_en).format("YYYY-MM-DD HH:mm:ss"));

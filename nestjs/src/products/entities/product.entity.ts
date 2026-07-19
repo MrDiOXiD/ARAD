@@ -11,6 +11,7 @@ import {
 import { CategoriesEntity } from '../../categories/entities/category.entity';
 import { OrderProductsEntity } from '../../orders/entities/order-product.entity';
 import { UserEntity } from '@/users/entities/user.entity';
+import { ReviewEntity } from '@/reviews/entities/review.entity';
 
 @Entity({ name: 'products' })
 export class ProductEntity {
@@ -44,9 +45,22 @@ export class ProductEntity {
   @Column({ type: 'boolean', default: true })
   isActive!: boolean;
   
+  //adding required parameters in front
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  brand!: string | null;
+
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  badge!: string | null;
+
+  // 🌟 The dynamic key-value store for frontend specs
+  @Column({ type: 'jsonb', nullable: true })
+  attributes!: Record<string, string | number | boolean> | null;
 
   @Column({ nullable: true })
   productImage!: string;
+
+  @Column({ type: 'jsonb', nullable: true })
+  gallery!: { secure_url: string; public_id: string }[];
 
   @Column({ nullable: true })
   imagePublicId!: string;
@@ -71,4 +85,6 @@ export class ProductEntity {
 
   @OneToMany(() => OrderProductsEntity, (op) => op.product)
   orderProducts!: OrderProductsEntity[]; // was 'products' — renamed to avoid collision with entity class name
+  @OneToMany(() => ReviewEntity, (review) => review.product)
+  reviews!: ReviewEntity[];
 }

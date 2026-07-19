@@ -11,6 +11,7 @@ import { Roles } from '../../utils/common/Roles.enum';
 import { OrderEntity } from '../../orders/entities/order.entity';
 import { CategoriesEntity } from '../../categories/entities/category.entity';
 import { ProductEntity } from '../../products/entities/product.entity';
+import { ReviewEntity } from '@/reviews/entities/review.entity';
 
 @Entity({ name: 'users' })
 export class UserEntity {
@@ -48,4 +49,6 @@ export class UserEntity {
 
   @OneToMany(() => OrderEntity, (order) => order.user)
   orders!: OrderEntity[];
+  @OneToMany(() => ReviewEntity, (review) => review.user)
+  reviews!: ReviewEntity[];
 }
