@@ -90,4 +90,5 @@ export interface ProductDetail {
   reviewsCount?: number;
   qaCount?: number;
   description?: string;
+  brand?:string;
 }

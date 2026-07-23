@@ -11,8 +11,7 @@ import ProductBuyBox from "./ProductBuyBox";
 
 interface ProductPageProps {
   product: ProductDetail;
-  onAddToCart?: (productId: string, qty: number) => void;
-  onBuyNow?: (productId: string, qty: number) => void;
+  onBuyNow?: (productId: string, qty: number) => void;   // onAddToCart removed
   onAddSimilarToCart?: (productId: string) => void;
 }
 
@@ -37,8 +36,7 @@ const defaultTrustItems = [
   },
 ];
 
-export default function ProductPage({ product, onAddToCart, onBuyNow, onAddSimilarToCart }: any) {
-  return (
+export default function ProductPage({ product, onBuyNow, onAddSimilarToCart }: ProductPageProps) {  return (
     <div className="prd-page" dir="rtl">
       <div className="prd-container">
         <section className="prd-hero">
@@ -61,6 +59,9 @@ export default function ProductPage({ product, onAddToCart, onBuyNow, onAddSimil
           />
 
           <ProductBuyBox
+            id={product.id}
+            title={product.title}
+            brand={product.brand}
             price={product.price}
             oldPrice={product.oldPrice}
             discountPercent={product.discountPercent}
@@ -68,7 +69,6 @@ export default function ProductPage({ product, onAddToCart, onBuyNow, onAddSimil
             maxQty={product.maxQty}
             perks={product.perks}
             sellerInfo={product.sellerInfo}
-            onAddToCart={(qty: number) => onAddToCart?.(product.id, qty)}
             onBuyNow={(qty: number) => onBuyNow?.(product.id, qty)}
           />
         </section>

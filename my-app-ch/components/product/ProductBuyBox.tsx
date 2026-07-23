@@ -1,12 +1,16 @@
 'use client';
 
+import { useState } from 'react';
 import { SellerInfo } from '@/interfaces/product/types';
 import { formatPrice, formatRating, toPersianDigits } from '@/utils/formats/numbers';
-import { useState } from 'react';
-import { IconCheck } from './icons/icons';
-;
+import { IconCheck } from './icons/icons'; // Make sure this path matches your project
+import { useAppDispatch } from '@/store-redux/hooks';
+import { addToCart } from '@/store-redux/features/cart/cartSlice';
 
 interface ProductBuyBoxProps {
+  id: string | number;
+  title: string;
+  brand?: string | null;
   price: number;
   oldPrice?: number;
   discountPercent?: number;
@@ -14,11 +18,13 @@ interface ProductBuyBoxProps {
   maxQty?: number;
   perks: string[];
   sellerInfo: SellerInfo;
-  onAddToCart?: (qty: number) => void;
   onBuyNow?: (qty: number) => void;
 }
 
 export default function ProductBuyBox({
+  id,
+  title,
+  brand,
   price,
   oldPrice,
   discountPercent,
@@ -26,9 +32,10 @@ export default function ProductBuyBox({
   maxQty = 10,
   perks,
   sellerInfo,
-  onAddToCart,
   onBuyNow,
 }: ProductBuyBoxProps) {
+  
+  const dispatch = useAppDispatch();
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
 
@@ -37,11 +44,19 @@ export default function ProductBuyBox({
   const dec = () => setQty((q) => Math.max(1, q - 1));
   const inc = () => setQty((q) => Math.min(maxQty, q + 1));
 
-  const handleAddToCart = () => {
-    onAddToCart?.(qty);
-    setAdded(true);
-    window.setTimeout(() => setAdded(false), 1600);
-  };
+ const handleAddToCart = () => {
+  dispatch(addToCart({
+    id: Number(id),
+    title,
+    icon: '🛒',
+    unitPrice: price,
+    quantity: qty,
+    tags: brand ? [{ label: `برند: ${brand}` }] : [],
+  }));
+
+  setAdded(true);
+  window.setTimeout(() => setAdded(false), 1600);
+};
 
   return (
     <div className="prd-buybox">
@@ -75,6 +90,7 @@ export default function ProductBuyBox({
       <button type="button" className="prd-btn prd-btn--primary" onClick={() => onBuyNow?.(qty)}>
         خرید فوری
       </button>
+
       <button
         type="button"
         className={`prd-btn prd-btn--secondary${added ? ' prd-btn--added' : ''}`}

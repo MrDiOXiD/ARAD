@@ -6,8 +6,8 @@ export interface CartItemTag {
 export interface CartItem {
   id: number;
   title: string;
-  icon: string;          // emoji placeholder — swap for image path when ready
-  bgColor: string;       // placeholder background color
+  icon: string;            // emoji fallback placeholder
+  productImage?: string;   // real image URL from API
   unitPrice: number;
   quantity: number;
   tags: CartItemTag[];

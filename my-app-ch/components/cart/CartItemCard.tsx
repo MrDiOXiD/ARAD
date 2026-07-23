@@ -25,12 +25,16 @@ export default function CartItemCard({
     <article className="cart-card">
       {/* Product image */}
       <div className="cart-card__image">
-        <div
-          className="cart-card__img-placeholder"
-          style={{ backgroundColor: item.bgColor }}
-          aria-label={item.title}
-        >
-          {item.icon}
+        <div className="cart-card__img-placeholder" aria-label={item.title}>
+          {item.productImage ? (
+            <img
+              src={item.productImage}
+              alt={item.title}
+              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+            />
+          ) : (
+            <span>{item.icon}</span>
+          )}
         </div>
       </div>
 

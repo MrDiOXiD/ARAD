@@ -13,15 +13,17 @@ export default function CartItemList({
   onRemove,
 }: CartItemListProps) {
   return (
-    <section className="cart-item-list" aria-label="محصولات سبد خرید">
-      {items.map((item) => (
-        <CartItemCard
-          key={item.id}
-          item={item}
-          onQuantityChange={onQuantityChange}
-          onRemove={onRemove}
-        />
-      ))}
-    </section>
+  <section className="cart-item-list" aria-label="محصولات سبد خرید">
+  {items.map((item, index) => (
+    <CartItemCard
+      // 🌟 Combine id with index so it's 100% unique even if IDs duplicate
+      key={`${item.id}-${index}`} 
+      item={item}
+      onQuantityChange={onQuantityChange}
+      onRemove={onRemove} 
+    />
+  ))}
+</section>
+
   );
 }

@@ -3,20 +3,26 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 
+
+import { useAppSelector } from '@/store-redux/hooks';
+
+// Inside your component, before the return:
+
 const Y = '#F5C518';   // brand yellow - always via inline style, never a custom Tailwind class
 const YD = '#E0B000';  // brand yellow dark
 
 const NAV = [
-  { label: 'نور و روشنایی',      icon: 'bi-lightbulb'        },
-  { label: 'ابزار و لوازم برقی', icon: 'bi-tools'            },
-  { label: 'کلید و پریز',        icon: 'bi-toggle-on'        },
-  { label: 'آنتن',               icon: 'bi-broadcast'        },
-  { label: 'تهویه سرما و گرما',  icon: 'bi-thermometer-half' },
-  { label: 'سیم و کابل',         icon: 'bi-ethernet'         },
+  { label: 'نور و روشنایی', icon: 'bi-lightbulb' },
+  { label: 'ابزار و لوازم برقی', icon: 'bi-tools' },
+  { label: 'کلید و پریز', icon: 'bi-toggle-on' },
+  { label: 'آنتن', icon: 'bi-broadcast' },
+  { label: 'تهویه سرما و گرما', icon: 'bi-thermometer-half' },
+  { label: 'سیم و کابل', icon: 'bi-ethernet' },
 ];
 
 export default function Header() {
-  const [open, setOpen]         = useState(false);
+  const cartCount = useAppSelector((state) => state.cart.items.length);
+  const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const mobRefs = useRef<(HTMLAnchorElement | null)[]>([]);
 
@@ -32,19 +38,19 @@ export default function Header() {
     if (!open) return;
     mobRefs.current.forEach((el, i) => {
       if (!el) return;
-      el.style.opacity   = '0';
+      el.style.opacity = '0';
       el.style.transform = 'translateX(12px)';
       setTimeout(() => {
         el.style.transition = `opacity 0.28s ${i * 0.06}s ease, transform 0.28s ${i * 0.06}s ease`;
-        el.style.opacity    = '1';
-        el.style.transform  = 'translateX(0)';
+        el.style.opacity = '1';
+        el.style.transform = 'translateX(0)';
       }, 10);
     });
   }, [open]);
 
   /* hamburger line transforms */
-  const L1: React.CSSProperties = open ? { transform: 'translateY(8px) rotate(45deg)' }  : {};
-  const L2: React.CSSProperties = open ? { opacity: 0 }                                   : {};
+  const L1: React.CSSProperties = open ? { transform: 'translateY(8px) rotate(45deg)' } : {};
+  const L2: React.CSSProperties = open ? { opacity: 0 } : {};
   const L3: React.CSSProperties = open ? { transform: 'translateY(-8px) rotate(-45deg)' } : {};
 
   return (
@@ -62,9 +68,9 @@ export default function Header() {
 
           {/* Logo placeholder */}
           <Link href="/">
-          <div className="hidden md:flex items-center justify-center flex-shrink-0 w-28 h-12 border-2 border-dashed border-gray-300 rounded-xl text-gray-300 text-xs">
-            لوگو
-          </div>
+            <div className="hidden md:flex items-center justify-center flex-shrink-0 w-28 h-12 border-2 border-dashed border-gray-300 rounded-xl text-gray-300 text-xs">
+              لوگو
+            </div>
           </Link>
 
           {/* vertical divider */}
@@ -78,7 +84,7 @@ export default function Header() {
                 className="search-shine flex-shrink-0 h-11 sm:h-12 px-4 sm:px-5 flex items-center justify-center border-none cursor-pointer transition-colors duration-200"
                 style={{ backgroundColor: Y }}
                 onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = YD; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = Y;  }}
+                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = Y; }}
               >
                 <i className="bi bi-search text-gray-900 text-lg" />
               </button>
@@ -102,10 +108,14 @@ export default function Header() {
               <span className="action-tip">سبد خرید</span>
               <div className="relative">
                 <i className="bi bi-bag text-2xl" />
-                <span
-                  className="badge-pulse absolute -top-1.5 -left-1.5 w-4 h-4 flex items-center justify-center rounded-full text-[10px] font-bold leading-none text-gray-900"
-                  style={{ backgroundColor: Y }}
-                >۲</span>
+                {cartCount > 0 && (
+                  <span
+                    className="badge-pulse absolute -top-1.5 -left-1.5 w-4 h-4 flex items-center justify-center rounded-full text-[10px] font-bold leading-none text-gray-900"
+                    style={{ backgroundColor: Y }}
+                  >
+                    {cartCount}
+                  </span>
+                )}
               </div>
               <span className="text-[11px] text-gray-500">سبد خرید</span>
             </Link>

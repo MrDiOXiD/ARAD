@@ -9,13 +9,14 @@ export interface Category {
 
 export interface ShopProduct {
   id: number;
-  brand: string;
   title: string;
-  icon: string;
-  badge?: BadgeVariant;
-  rating: number;
-  reviews: string;
-  oldPrice?: string;
   price: string;
+  brand?: string;
+  icon?: string;          // emoji fallback
+  productImage?: string;  // ← add this: real S3 URL from API
+  rating?: number;
+  reviews?: string;
+  badge?: BadgeVariant;
+  oldPrice?: string;
   discount?: string;
 }

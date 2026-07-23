@@ -44,7 +44,7 @@ export default function ProductTabs({ specGroups, reviewsCount = 0, qaCount = 0,
         ))}
       </div>
 
-      {active === 'specs' && (
+      {/* {active === 'specs' && (
         <div className="prd-specs" key="specs">
           {specGroups.map((group) => (
             <div key={group.title} className="prd-spec-group">
@@ -62,7 +62,7 @@ export default function ProductTabs({ specGroups, reviewsCount = 0, qaCount = 0,
             </div>
           ))}
         </div>
-      )}
+      )} */}
 
       {active === 'description' && (
         <div className="prd-specs" key="description">

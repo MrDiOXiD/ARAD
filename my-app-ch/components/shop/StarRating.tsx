@@ -1,6 +1,6 @@
 interface StarRatingProps {
   rating: number;
-  reviews: string;
+  reviews: string|any;
 }
 
 export default function StarRating({ rating, reviews }: StarRatingProps) {
