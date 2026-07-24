@@ -16,10 +16,9 @@ import { LoginUserDto } from '../dto/login-user.dto';
 import { JwtPayload } from '../../utils/jwt/jwt-payload';
 import { AuditService } from '../../audit/audit.services';
 import { normalizeError } from '../../utils/errors/normalize-error.util';
-import { AuthResponse } from '../interfaces/auth-response.interface';
 import { UserEntity } from '../entities/user.entity';
-
-export type SafeUser = Omit<UserEntity, 'password'>;
+// Import the Swagger DTO classes (this replaces the old local type)
+import { SafeUser, AuthResponse } from '../dto/user-responses.dto';
 
 @Injectable()
 export class UserService {
@@ -41,8 +40,14 @@ export class UserService {
     const newUser = this.userRepository.create({ ...body, password: hashed });
     const saved = await this.userRepository.save(newUser);
 
-    const { password: _omit, ...safeUser } = saved;
-    return safeUser as SafeUser;
+    // Return explicit shape matching the SafeUser class
+    return {
+      id: saved.id,
+      email: saved.email,
+      username: saved.username,
+      roles: saved.roles,
+      createdAt: saved.createdAt,
+    };
   }
 
   // ── Login ─────────────────────────────────────────────────────────────────
@@ -85,7 +90,13 @@ export class UserService {
 
     return {
       accessToken,
-      user: { id: user.id, username: user.username, email: user.email },
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        roles: user.roles,
+        createdAt: user.createdAt,
+      },
     };
   }
 
@@ -93,7 +104,14 @@ export class UserService {
 
   async findAllUsers(): Promise<SafeUser[]> {
     const users = await this.userRepository.find();
-    return users.map(({ password: _omit, ...safe }) => safe as SafeUser);
+    
+    return users.map((user) => ({
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      roles: user.roles,
+      createdAt: user.createdAt,
+    }));
   }
 
   async findUserById(id: number): Promise<UserEntity | null> {

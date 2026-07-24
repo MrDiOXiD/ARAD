@@ -25,6 +25,8 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const mobRefs = useRef<(HTMLAnchorElement | null)[]>([]);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   /* scroll → deepen shadow */
   useEffect(() => {
@@ -108,7 +110,7 @@ export default function Header() {
               <span className="action-tip">سبد خرید</span>
               <div className="relative">
                 <i className="bi bi-bag text-2xl" />
-                {cartCount > 0 && (
+                {mounted && cartCount > 0 && (
                   <span
                     className="badge-pulse absolute -top-1.5 -left-1.5 w-4 h-4 flex items-center justify-center rounded-full text-[10px] font-bold leading-none text-gray-900"
                     style={{ backgroundColor: Y }}

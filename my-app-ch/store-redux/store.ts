@@ -1,4 +1,4 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore, Middleware } from '@reduxjs/toolkit';
 import cartReducer from './features/cart/cartSlice';
 import { saveCartToStorage } from './cartPersistence';
 
@@ -8,14 +8,18 @@ export const store = configureStore({
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
-      // After every action, sync cart items to localStorage.
-      // Runs only on the client (saveCartToStorage is SSR-safe).
-      () => (next) => (action) => {
+      // 1. Add the missing 'storeAPI' parameter
+      // 2. Cast the entire function as Middleware to satisfy TypeScript
+      ((storeAPI) => (next) => (action) => {
         const result = next(action);
-        const state = store.getState();
+        
+        // We continue using 'store.getState()' here to avoid a circular 
+        // type dependency issue that often happens with 'storeAPI'
+        const state = store.getState(); 
+        
         saveCartToStorage(state.cart.items);
         return result;
-      },
+      }) as Middleware
     ),
 });
 

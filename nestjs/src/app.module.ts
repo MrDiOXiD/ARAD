@@ -18,6 +18,7 @@ import { ProductsModule } from './products/products.module';
 import { CategoriesModule } from './categories/categories.module';
 import { OrdersModule } from './orders/orders.module';
 import { ReviewsModule } from './reviews/reviews.module';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
@@ -33,8 +34,8 @@ import { ReviewsModule } from './reviews/reviews.module';
     ProductsModule,
     CategoriesModule,
     OrdersModule,
-    ReviewsModule
-    
+    ReviewsModule,
+    PaymentModule,
   ],
 })
 export class AppModule implements NestModule, OnModuleInit {
@@ -47,6 +48,10 @@ export class AppModule implements NestModule, OnModuleInit {
       'ARVAN_ACCESS_KEY',
       'ARVAN_SECRET_KEY',
       'ARVAN_BUCKET_NAME',
+      // Payment gateway — fail fast so a misconfigured deploy is caught at startup
+      'ZIBAL_MERCHANT',
+      'APP_URL',
+      'FRONTEND_URL',
     ];
 
     for (const envVar of requiredArvanEnv) {

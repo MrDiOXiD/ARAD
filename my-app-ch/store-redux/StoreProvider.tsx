@@ -1,5 +1,5 @@
 'use client';
-
+import { Middleware } from '@reduxjs/toolkit'; // 1. Add this import at the top
 import { useRef } from 'react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
@@ -15,14 +15,18 @@ import { initializeCart } from './features/cart/cartSlice';
 function makeStore() {
   const store = configureStore({
     reducer: { cart: cartReducer },
-    middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware().concat(
-        () => (next) => (action) => {
-          const result = next(action);
-          saveCartToStorage(store.getState().cart.items);
-          return result;
-        },
-      ),
+   middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware().concat(
+          // 2. Add storeAPI and cast as Middleware
+          ((storeAPI) => (next) => (action) => {
+            const result = next(action);
+            
+            // 3. Use storeAPI.getState() instead of referencing a global 'store'
+            saveCartToStorage(storeAPI.getState().cart.items);
+            
+            return result;
+          }) as Middleware
+        ),
   });
 
   // Rehydrate from localStorage immediately after store creation (client only)

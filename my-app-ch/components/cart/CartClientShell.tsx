@@ -17,6 +17,7 @@ export default function CartClientShell({ initialItems }: CartClientShellProps) 
   const dispatch = useAppDispatch();
   // items come from Redux, which StoreProvider already rehydrated from localStorage
   const { items } = useAppSelector((state) => state.cart);
+console.log(items);
 
   // initialItems is kept as a prop for future server-side cart merging
   // (e.g. logged-in user's server cart merged with guest localStorage cart)

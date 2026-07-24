@@ -23,6 +23,8 @@ import { ProductsModule } from '@/products/products.module';
     forwardRef(() => AuditModule),
   ],
   controllers: [OrdersController],
-  providers: [OrdersService, AuditService],
+  providers:   [OrdersService, AuditService],
+  // Export OrdersService so PaymentModule can inject it without circular deps
+  exports:     [OrdersService],
 })
 export class OrdersModule {}

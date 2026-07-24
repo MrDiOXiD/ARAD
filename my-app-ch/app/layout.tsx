@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Vazirmatn } from 'next/font/google';  // ← swap <link> for this
 import '@/styles/globals.css';
 import Goftino from '@/components/goftino/Goftino';
-import QueryProvider from '@/provider-reactQuery/QueryProvider';
+import QueryProvider from '@/hooks/reactQuery/provider-reactQuery/QueryProvider';
 import StoreProvider from '@/store-redux/StoreProvider';
 import { Suspense } from 'react';
 

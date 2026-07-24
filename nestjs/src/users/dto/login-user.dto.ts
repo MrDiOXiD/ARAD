@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
   IsNotEmpty,
@@ -8,11 +9,22 @@ import {
 } from 'class-validator';
 
 export class LoginUserDto {
+  @ApiProperty({
+    description: 'The registered email address of the user',
+    example: 'john.doe@example.com',
+    format: 'email',
+  })
   @IsString()
   @IsNotEmpty()
   @IsEmail({}, { message: 'Invalid email address' })
   email!: string;
 
+  @ApiProperty({
+    description: 'The user password. Must contain at least one letter and one number.',
+    example: 'StrongP@ssw0rd1', // Example passes your regex and length constraints
+    minLength: 8,
+    maxLength: 72,
+  })
   @IsString()
   @IsNotEmpty()
   @MinLength(8, { message: 'Password must be at least 8 characters' })
