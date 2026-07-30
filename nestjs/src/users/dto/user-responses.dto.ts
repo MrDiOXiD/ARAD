@@ -6,8 +6,18 @@ export class SafeUser {
   @ApiProperty({ example: 1, description: 'The unique numeric identifier' })
   id!: number;
 
-  @ApiProperty({ example: 'john.doe@example.com' })
-  email!: string;
+  @ApiProperty({ 
+    description: 'Valid Iranian mobile phone number', 
+    example: '09123456789' 
+  })
+  phoneNumber!: string;
+
+  @ApiProperty({ 
+    example: 'john.doe@example.com', 
+    description: 'The registered email address of the user (Optional)',
+    required: false
+  })
+  email?: string;
 
   @ApiProperty({ example: 'johndoe99' })
   username!: string;

@@ -1,15 +1,10 @@
 /* eslint-disable prettier/prettier */
 // shipping.entity.ts
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  OneToOne,
-  JoinColumn,
-} from 'typeorm';
-import { OrderEntity } from './order.entity';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, ManyToOne } from "typeorm";
+import { OrderEntity } from "./order.entity";
+import { UserAddressEntity } from "@/addressess/entities/user-address.entity";
 
-@Entity({ name: 'shipping' })
+@Entity({ name: "shipping" })
 export class ShippingEntity {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -22,6 +17,13 @@ export class ShippingEntity {
 
   @Column()
   address!: string;
+
+  @Column({ length: 10 })
+  postalCode!: string;
+
+  @ManyToOne(() => UserAddressEntity, { nullable: true, onDelete: "SET NULL" })
+  @JoinColumn()
+  sourceAddress?: UserAddressEntity;
 
   @Column()
   city!: string;

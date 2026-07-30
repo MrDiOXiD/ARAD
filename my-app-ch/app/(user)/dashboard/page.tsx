@@ -1,23 +1,29 @@
-// app/dashboard/page.tsx — Server Component
+"use client"
 import '@/styles/components/dashboard/dashboard.css';
 
-import { CURRENT_USER } from '../../../utils/mockData/dashboardData';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import WelcomeBanner from '@/components/dashboard/WelcomeBanner';
 import RecentOrders from '@/components/dashboard/RecentOrders';
+import { useAuth } from '@/context/AuthContext';
 
-export const metadata = {
-  title: 'پنل کاربری | الکتریکی آنلاین',
-  description: 'مدیریت سفارشات، آدرس‌ها و اطلاعات حساب کاربری',
-};
+
 
 export default function DashboardPage() {
+  const { user, isBootstrapping } = useAuth();
+
+console.log(user);
+
+
+  if (!user) {
+    return null;
+  }
+
   return (
     <div className="db-page" dir="rtl">
-      <DashboardHeader
-        userName={`${CURRENT_USER.name} رضایی`}
-        avatarInitial={CURRENT_USER.avatarInitial}
+        <DashboardHeader
+        userName={user.username}
+        avatarInitial={user.username.charAt(0).toUpperCase()}
         cartCount={2}
         notifCount={1}
       />
@@ -27,8 +33,8 @@ export default function DashboardPage() {
 
         <main className="db-main">
           <WelcomeBanner
-            userName={CURRENT_USER.name}
-            memberSince={CURRENT_USER.memberSince}
+            userName={user.username}
+            memberSince={user.createdAt}
           />
           <RecentOrders />
         </main>

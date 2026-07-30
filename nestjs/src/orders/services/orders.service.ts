@@ -248,14 +248,17 @@ export class OrdersService {
     }
   }
 
-  private async createShippingEntity(
-    shippingAddress: CreateShippingDto,
-  ): Promise<ShippingEntity> {
-    const shippingEntity = new ShippingEntity();
-    shippingEntity.phone = shippingAddress.phone;
-    shippingEntity.name = shippingAddress.name;
-    shippingEntity.address = shippingAddress.address;
-    shippingEntity.city = shippingAddress.city;
-    return shippingEntity;
-  }
+private async createShippingEntity(
+  shippingAddress: CreateShippingDto,
+): Promise<ShippingEntity> {
+  const shippingEntity = new ShippingEntity();
+  shippingEntity.phone = shippingAddress.phone;
+  shippingEntity.name = shippingAddress.name;
+  shippingEntity.address = shippingAddress.address;
+  shippingEntity.city = shippingAddress.city;
+  shippingEntity.postalCode = shippingAddress.postalCode; // new
+  return shippingEntity;
+}
+
+  
 }

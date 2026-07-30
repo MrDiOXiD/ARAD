@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { ShopProduct } from '@/interfaces/shop/types';
 import { addToCart } from '@/store-redux/features/cart/cartSlice';
 import { useAppDispatch } from '@/store-redux/hooks';
-import { mapShopProductToCartItem } from '@/utils/mapShopProductToCartItem';
+import { mapShopProductToCartItem } from '@/lib/product/mapShopProductToCartItem';
 
 export function useAddShopProductToCart() {
   const dispatch = useAppDispatch();

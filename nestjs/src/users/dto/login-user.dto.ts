@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
   IsNotEmpty,
+  IsOptional,
   IsString,
   Matches,
   MaxLength,
@@ -16,6 +17,7 @@ export class LoginUserDto {
   })
   @IsString()
   @IsNotEmpty()
+  @IsOptional()
   @IsEmail({}, { message: 'Invalid email address' })
   email!: string;
 
@@ -34,4 +36,15 @@ export class LoginUserDto {
     message: 'Password must contain at least one letter and one number',
   })
   password!: string;
+
+  @ApiProperty({
+    description: 'Valid Iranian mobile phone number',
+    example: '09123456789',
+  })
+  @IsString()
+  @IsNotEmpty() // Note: Change to @IsOptional() if users can login with EITHER email or phone, rather than requiring both
+  @Matches(/^(?:0|\+98|0098)9\d{9}$/, {
+    message: 'Phone number must be a valid Iranian mobile number (e.g., 09123456789, +989123456789, or 00989123456789)',
+  })
+  phoneNumber!: string;
 }

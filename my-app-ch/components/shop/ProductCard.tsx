@@ -3,6 +3,7 @@ import StarRating from './StarRating';
 import { BADGE_LABEL } from '@/utils/mockData/shopData';
 import Link from 'next/link';
 import { useAddShopProductToCart } from '@/hooks/useAddShopProductToCart'; // ← add
+import FavoriteButton from '../FavoriteButton';
 
 interface ProductCardProps {
   product: ShopProduct;
@@ -24,9 +25,7 @@ export default function ProductCard({ product, animationDelay }: ProductCardProp
               {BADGE_LABEL[badge]}
             </span>
           )}
-          <button className="shop-wish-btn" aria-label="افزودن به علاقه‌مندی">
-            <i className="bi bi-heart" />
-          </button>
+          <FavoriteButton productId={product.id} className="wl-card__heart-btn" />
           <img
             src={icon}
             alt={title}

@@ -1,19 +1,21 @@
-import { Exclude } from 'class-transformer';
+import { Exclude } from "class-transformer";
 import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   OneToMany,
   PrimaryGeneratedColumn,
-} from 'typeorm';
+} from "typeorm";
 
-import { Roles } from '../../utils/common/Roles.enum';
-import { OrderEntity } from '../../orders/entities/order.entity';
-import { CategoriesEntity } from '../../categories/entities/category.entity';
-import { ProductEntity } from '../../products/entities/product.entity';
-import { ReviewEntity } from '@/reviews/entities/review.entity';
+import { Roles } from "../../utils/common/Roles.enum";
+import { OrderEntity } from "../../orders/entities/order.entity";
+import { CategoriesEntity } from "../../categories/entities/category.entity";
+import { ProductEntity } from "../../products/entities/product.entity";
+import { ReviewEntity } from "@/reviews/entities/review.entity";
+import { UserAddressEntity } from "@/addressess/entities/user-address.entity";
 
-@Entity({ name: 'users' })
+@Entity({ name: "users" })
 export class UserEntity {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -23,19 +25,44 @@ export class UserEntity {
 
   @Column({ unique: true })
   email!: string;
+  // Add this inside your UserEntity class
+
+  @Index() // Security/Performance: Speeds up database lookups during login to prevent DoS attacks
+  @Column({
+    type: "varchar",
+    length: 15, // Security: Strictly limits size (fits '09123456789', '+989123456789', or '00989123456789')
+    unique: true, // Security: Prevents attackers from registering multiple accounts with the same phone number
+    nullable: true, // Set to false ONLY if every single user is forced to provide a phone number
+  })
+  phoneNumber!: string; // Use phoneNumber?: string; if nullable is true
 
   @Column()
   @Exclude()
   password!: string;
 
-  @Column({ type: 'enum', enum: Roles, array: true, default: [Roles.USER] })
+  @Column({ type: "enum", enum: Roles, array: true, default: [Roles.USER] })
   roles!: Roles[];
 
   @CreateDateColumn()
   createdAt!: Date;
 
-  @OneToMany(() => ProductEntity, (product:ProductEntity) => product.createdBy)
+@Column({ unique: true, nullable: true })
+googleId?: string;
+
+// Google-only accounts never provide a phone number at signup, and
+// your phoneNumber column is currently NOT NULL + UNIQUE (from the
+// earlier migration). Making it nullable is the cleanest option —
+// otherwise every Google signup would need a fake placeholder phone
+// number, the same problem the earlier migration's backfill worked
+// around for existing rows. This needs its own migration (below).
+
+
+
+  @OneToMany(() => ProductEntity, (product: ProductEntity) => product.createdBy)
   products!: ProductEntity[];
+
+  @OneToMany(() => UserAddressEntity, (address) => address.user)
+  addresses!: UserAddressEntity[];
 
   // ERROR 1 FIX: category.entity.ts references user.category
   // Keep this name as 'category' to match the @ManyToOne inverse in CategoriesEntity

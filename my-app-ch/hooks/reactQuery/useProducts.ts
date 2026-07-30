@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { getFetch } from '@/utils/fetch';
 import { ApiProduct } from '@/interfaces/ProductApi/types';
+import { getFetch } from '@/lib/fetch';
 
 // --------------------------------------------------
 // 1. Hook to fetch ALL products (for the Shop Grid)

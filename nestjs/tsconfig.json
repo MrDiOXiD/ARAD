@@ -21,10 +21,14 @@
       "@/*": ["./src/*"]
     }
   },
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
+  },
   "include": ["src/**/*", "src/utils/types/**/*.d.ts"],
-"exclude": [
-  "node_modules",
-  "dist",
-  "**/*-old.*",
-  "**/*-old/**"
-]}
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*-old.*",
+    "**/*-old/**"
+  ]
+}

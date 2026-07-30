@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { ApiProduct } from '@/interfaces/ProductApi/types';
 import { addToCart } from '@/store-redux/features/cart/cartSlice';
 import { useAppDispatch } from '@/store-redux/hooks';
-import { mapApiProductToCartItem } from '@/utils/mapApiProductToCartItem';
+import { mapApiProductToCartItem } from '@/lib/product/mapApiProductToCartItem';
 
 /**
  * Drop-in hook for any component that needs an "Add to cart" action.

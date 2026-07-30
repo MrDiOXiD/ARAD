@@ -19,6 +19,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { OrdersModule } from './orders/orders.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { PaymentModule } from './payment/payment.module';
+import { WishlistModule } from './whishlist/whishlist.module';
 
 @Module({
   imports: [
@@ -36,6 +37,8 @@ import { PaymentModule } from './payment/payment.module';
     OrdersModule,
     ReviewsModule,
     PaymentModule,
+    WishlistModule
+  
   ],
 })
 export class AppModule implements NestModule, OnModuleInit {

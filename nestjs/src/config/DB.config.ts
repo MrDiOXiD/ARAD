@@ -9,5 +9,6 @@ export const typeOrmCOnfig: TypeOrmModuleOptions = {
     password: 'Amir1384@',   // ✅ FIXED
     database: 'API',         // ✅ FIXED
     entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-    synchronize: true,
+    synchronize: false,
 };
+// !make searches about this synchrounous

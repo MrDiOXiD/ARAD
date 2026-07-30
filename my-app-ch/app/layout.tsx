@@ -5,6 +5,7 @@ import Goftino from '@/components/goftino/Goftino';
 import QueryProvider from '@/hooks/reactQuery/provider-reactQuery/QueryProvider';
 import StoreProvider from '@/store-redux/StoreProvider';
 import { Suspense } from 'react';
+import Providers from '@/context/providers';
 
 const vazirmatn = Vazirmatn({
   subsets: ['arabic'],
@@ -27,11 +28,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       >
         <Suspense fallback={null}>
 
-        <StoreProvider>
-          <QueryProvider>
-            {children}
-          </QueryProvider>
-        </StoreProvider>
+          <StoreProvider>
+            <QueryProvider>
+              <Providers>
+                {children}
+              </Providers>
+            </QueryProvider>
+          </StoreProvider>
         </Suspense>
         <Goftino />
       </body>

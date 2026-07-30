@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import CartHeader from './CartHeader';
 import CartItemList from './CartItemList';
 import OrderSummary from './OrderSummary';
@@ -10,18 +10,20 @@ import { changeQuantity, removeItem } from '@/store-redux/features/cart/cartSlic
 import Link from 'next/link';
 
 interface CartClientShellProps {
-  initialItems: CartItem[]; // always [] now — localStorage is the source of truth
+  initialItems: CartItem[];
 }
 
 export default function CartClientShell({ initialItems }: CartClientShellProps) {
   const dispatch = useAppDispatch();
-  // items come from Redux, which StoreProvider already rehydrated from localStorage
   const { items } = useAppSelector((state) => state.cart);
-console.log(items);
 
-  // initialItems is kept as a prop for future server-side cart merging
-  // (e.g. logged-in user's server cart merged with guest localStorage cart)
-  // For now it's unused since StoreProvider handles rehydration.
+  // Track client mounting to prevent SSR vs LocalStorage hydration mismatch
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   void initialItems;
 
   const handleQuantityChange = (id: number, delta: number) => {
@@ -36,6 +38,15 @@ console.log(items);
     (sum, item) => sum + item.unitPrice * item.quantity,
     0,
   );
+
+  // 🛡️ Prevent SSR hydration mismatch by rendering a safe placeholder until mounted
+  if (!isMounted) {
+    return (
+      <div className="cart-page" dir="rtl" style={{ fontFamily: 'Vazirmatn, IRANSans, Tahoma, sans-serif', minHeight: '60vh' }}>
+        <div className="cart-page__container" />
+      </div>
+    );
+  }
 
   // ── Empty state ───────────────────────────────────────────────
   if (items.length === 0) {

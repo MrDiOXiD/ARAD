@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { useAuth } from '@/context/AuthContext';
 
 
 import { useAppSelector } from '@/store-redux/hooks';
@@ -27,6 +28,7 @@ export default function Header() {
   const mobRefs = useRef<(HTMLAnchorElement | null)[]>([]);
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
+  const { user, isBootstrapping } = useAuth();
 
   /* scroll → deepen shadow */
   useEffect(() => {
@@ -123,10 +125,15 @@ export default function Header() {
             </Link>
 
             {/* Login */}
-            <Link href="/auth" className="top-action relative flex flex-col items-center gap-0.5 text-gray-700 no-underline">
-              <span className="action-tip">ثبت نام</span>
+            <Link
+              href={user ? '/dashboard' : '/auth'}
+              className="top-action relative flex flex-col items-center gap-0.5 text-gray-700 no-underline"
+            >
+              <span className="action-tip">{user ? user.username : 'ثبت نام'}</span>
               <i className="bi bi-person text-2xl" />
-              <span className="text-[11px] text-gray-500">ثبت نام</span>
+              <span className="text-[11px] text-gray-500">
+                {mounted && !isBootstrapping && user ? user.username : 'ثبت نام'}
+              </span>
             </Link>
 
             {/* Wishlist */}
@@ -249,9 +256,11 @@ export default function Header() {
               </div>
               <span className="text-xs text-gray-500">سبد خرید</span>
             </Link>
-            <Link href="#" className="flex flex-col items-center gap-1 text-gray-600 no-underline">
+            <Link href={user ? '/dashboard' : '/auth'} className="flex flex-col items-center gap-1 text-gray-600 no-underline">
               <i className="bi bi-person text-xl" />
-              <span className="text-xs text-gray-500">ثبت نام</span>
+              <span className="text-xs text-gray-500">
+                {mounted && !isBootstrapping && user ? user.username : 'ثبت نام'}
+              </span>
             </Link>
             <Link href="#" className="flex flex-col items-center gap-1 text-gray-600 no-underline">
               <i className="bi bi-heart text-xl" />

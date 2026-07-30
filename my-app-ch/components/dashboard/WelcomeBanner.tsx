@@ -5,6 +5,7 @@ interface WelcomeBannerProps {
   memberSince: string;
 }
 
+
 export default function WelcomeBanner({ userName, memberSince }: WelcomeBannerProps) {
   return (
     <section className="db-welcome" aria-label="خوش‌آمدگویی">
