@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { WishlistItemEntity } from '../entities/wishlist-item.entity';
+import { WishlistItemResponseDto } from '../dto/wishlist-responses.dto';
 
 @Injectable()
 export class WishlistService {
@@ -10,62 +11,88 @@ export class WishlistService {
     private readonly wishlistRepository: Repository<WishlistItemEntity>,
   ) {}
 
-  async findAllForUser(userId: number): Promise<WishlistItemEntity[]> {
-    return this.wishlistRepository.find({
-      where: { user: { id: userId } },
-      relations: ['product'], // Acceptable here since the frontend likely needs full product cards
+  async findAllForUser(userId: number): Promise<WishlistItemResponseDto[]> {
+    const rows = await this.wishlistRepository.find({
+      where: { userId: { id: userId } },
+      // Fixed: was relations: ['product'] — that relation doesn't
+      // exist on this entity, it's named `productId`. This was
+      // silently failing to join, which is why the dashboard grid had
+      // no product details to render.
+      relations: ['productId'],
       order: { createdAt: 'DESC' },
     });
+
+    return rows.map((row) => this.toResponseDto(row));
   }
 
-  /** Just the product ids — cheap payload for the "is this product favorited" check. */
   async findProductIdsForUser(userId: number): Promise<number[]> {
     const rows = await this.wishlistRepository.find({
-      where: { user: { id: userId } },
-      // 🛡️ SECURITY & PERFORMANCE: Only pull the ID from the product table.
-      // This prevents pulling massive amounts of unused product data into memory.
-      select: { productId: { id: true } },
-      relations: ['product'], 
+      where: { userId: { id: userId } },
+      relations: ['productId'], // was ['product'] — same fix as above
     });
-    
+
     return rows.map((row) => row.productId.id);
   }
 
-  async add(userId: number, productId: number): Promise<WishlistItemEntity> {
+  async add(userId: number, productId: number): Promise<WishlistItemResponseDto> {
+    let saved: WishlistItemEntity;
+
     try {
-      // 🛡️ TYPE SAFETY: Native TypeORM relation assignment without using "as any"
       const newItem = this.wishlistRepository.create({
-        userId: { id: userId },
-        productId: { id: productId }, 
+        userId: { id: userId } as any,
+        productId: { id: productId } as any,
       });
-      
-      return await this.wishlistRepository.save(newItem);
+      saved = await this.wishlistRepository.save(newItem);
     } catch (error: unknown) {
-      // Postgres unique_violation — same product favorited twice.
-      // Safely check for the error code whether it's direct or wrapped by TypeORM's driver
-      const pgCode = 
-        (error as { code?: string })?.code || 
+      const pgCode =
+        (error as { code?: string })?.code ||
         (error as { driverError?: { code?: string } })?.driverError?.code;
 
       if (pgCode === '23505') {
         const existing = await this.wishlistRepository.findOne({
           where: { userId: { id: userId }, productId: { id: productId } },
+          relations: ['productId'],
         });
-        
-        // Idempotent success: return the existing record instead of throwing a 409
-        if (existing) return existing;
+        if (existing) return this.toResponseDto(existing);
       }
-      
       throw error;
     }
+
+    // Re-fetch with the relation loaded so the response actually has
+    // product details, not just a bare product id — save() doesn't
+    // hydrate relations on its returned entity by default.
+    const withProduct = await this.wishlistRepository.findOne({
+      where: { id: saved.id },
+      relations: ['productId'],
+    });
+    return this.toResponseDto(withProduct!);
   }
 
   async remove(userId: number, productId: number): Promise<void> {
-    // Removing something already absent is a no-op success, not a 404
-    // — same idempotency reasoning as add() above.
     await this.wishlistRepository.delete({
-      userId: { id: userId },
-      productId: { id: productId },
+      userId: { id: userId } as any,
+      productId: { id: productId } as any,
     });
+  }
+
+  /**
+   * Maps the entity (with its awkwardly-named `userId`/`productId`
+   * relation properties, which actually hold full related entities,
+   * not numbers) onto what WishlistItemResponseDto actually promises:
+   * flat productId number + a product summary for rendering, no
+   * userId at all (the client never needs to see its own id echoed
+   * back on every row).
+   */
+  private toResponseDto(row: WishlistItemEntity): WishlistItemResponseDto {
+    return {
+      id: row.id,
+      productId: row.productId.id,
+      product: {
+        id: row.productId.id,
+        title: (row.productId as any).title,
+        price: (row.productId as any).price,
+      },
+      createdAt: row.createdAt,
+    };
   }
 }

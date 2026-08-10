@@ -7,10 +7,12 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from 'typeorm';
-import { UserEntity } from '@/users/entities/user.entity';
+} from "typeorm";
+import { UserEntity } from "@/users/entities/user.entity";
 
-@Entity({ name: 'user_addresses' })
+export type AddressIconType = "home" | "office" | "warehouse";
+
+@Entity({ name: "user_addresses" })
 export class UserAddressEntity {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -28,18 +30,24 @@ export class UserAddressEntity {
   @Column()
   city!: string;
 
-  @Column({ type: 'text' })
+  @Column()
+  province!: string;
+
+  @Column({ type: "text" })
   addressLine!: string;
 
   @Column({ length: 10 })
   postalCode!: string;
+
+  @Column({ type: "varchar", length: 20, default: "home" })
+  icon!: AddressIconType;
 
   /** At most one address per user should have this set to true — enforced in the service layer, see setDefault(). */
   @Column({ default: false })
   isDefault!: boolean;
 
   @Index()
-  @ManyToOne(() => UserEntity, (user) => user.addresses, { onDelete: 'CASCADE' })
+  @ManyToOne(() => UserEntity, (user) => user.addresses, { onDelete: "CASCADE" })
   @JoinColumn()
   user!: UserEntity;
 

@@ -1,8 +1,8 @@
 {
-  "name": "bazar",
-  "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "name": "ChatraApi",
+  "version": "1.1.0",
+  "description": "Chatra Team creating their own specialized API for their commercial , technical and educational purposes.",
+  "author": "MrDiOXiD(AmirHeydari)",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

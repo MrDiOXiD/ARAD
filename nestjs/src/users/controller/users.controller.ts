@@ -168,7 +168,10 @@ export class UserController {
 
   @ApiBearerAuth()
   @UseGuards(AuthenticationGuard, AuthorizedGuard([Roles.ADMIN]))
-  @Get(":id")
+  @Get(":id(\\d+)")   // was @Get(":id") — the (\d+) constraint means this
+                       // route can ONLY match numeric ids (e.g. /user/21),
+                       // never a literal word like /user/wishlist, no
+                       // matter what order controllers/modules load in.
   @ApiOperation({
     summary: "Retrieve a specific user by ID",
     description: "Requires an active JWT token and ADMIN role.",
@@ -193,7 +196,7 @@ export class UserController {
     const { password: _omit, ...safe } = user;
     return safe as SafeUser;
   }
-
+ 
   // Add this to UsersController. Requires ClassSerializerInterceptor to
   // be active (globally in main.ts, or add
   // @UseInterceptors(ClassSerializerInterceptor) here) so

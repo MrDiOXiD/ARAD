@@ -1,12 +1,12 @@
-import { WishlistItem } from '@/interfaces/dashboard/whishlist/wishlist';
+import { WishlistItem } from '@/lib/whislist/wishlist.api'; // was '@/interfaces/dashboard/whishlist/wishlist' — that's the mock type
 import WishlistCard from './WishlistCard';
 
 interface WishlistGridProps {
   items: WishlistItem[];
-  selectedIds: string[];
-  onSelect: (id: string, checked: boolean) => void;
-  onRemove: (id: string) => void;
-  onAddToCart: (id: string) => void;
+  selectedIds: number[];                              // was string[]
+  onSelect: (id: number, checked: boolean) => void;    // was string
+  onRemove: (id: number) => void;                      // was string
+  onAddToCart: (id: number) => void;                   // was string
 }
 
 export default function WishlistGrid({
@@ -34,9 +34,9 @@ export default function WishlistGrid({
       <div className="wl-grid">
         {items.map((item) => (
           <WishlistCard
-            key={item.id}
+            key={item.productId}
             item={item}
-            isSelected={selectedIds.includes(item.id)}
+            isSelected={selectedIds.includes(item.productId)}
             onSelect={onSelect}
             onRemove={onRemove}
             onAddToCart={onAddToCart}

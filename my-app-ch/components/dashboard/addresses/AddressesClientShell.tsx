@@ -2,29 +2,30 @@
 
 import { useState } from 'react';
 import AddressCard from './AddressCard';
-import { Address } from '@/interfaces/dashboard/address/types';
-import { ADDRESSES } from '@/utils/mockData/addressData';
-
+import AddressFormModal from './AddressFormModal';
+import { useAddresses } from '@/hooks/useAddresses';
+import { UserAddress } from '@/lib/addresses/addresses.api';
 
 export default function AddressesClientShell() {
-  const [addresses, setAddresses] = useState<Address[]>(ADDRESSES);
+  const { addresses, isLoading, remove } = useAddresses();
+  const [modalState, setModalState] = useState<
+    { open: false } | { open: true; address: UserAddress | null }
+  >({ open: false });
 
-  const handleDelete = (id: string) =>
-    setAddresses((prev) => prev.filter((a) => a.id !== id));
+console.log(addresses);
 
-  const handleEdit = (id: string) => {
-    // TODO: open edit modal / navigate to edit page
-    console.log('Edit address:', id);
-  };
 
-  const handleAdd = () => {
-    // TODO: open add modal / navigate to add page
-    console.log('Add new address');
-  };
+  const handleDelete = (id: number) => remove(id);
+  const handleEdit = (address: UserAddress) => setModalState({ open: true, address });
+  const handleAdd = () => setModalState({ open: true, address: null });
+  const closeModal = () => setModalState({ open: false });
+
+  if (isLoading) {
+    return <div className="addr-page__loading" aria-busy="true" />;
+  }
 
   return (
     <div className="addr-page" dir="rtl">
-      {/* Section header */}
       <div className="addr-header">
         <div className="addr-header__title-group">
           <h1 className="addr-header__title">
@@ -40,7 +41,6 @@ export default function AddressesClientShell() {
         </button>
       </div>
 
-      {/* Grid */}
       {addresses.length === 0 ? (
         <div className="addr-empty" role="status">
           <i className="bi bi-geo-alt addr-empty__icon" aria-hidden="true" />
@@ -52,11 +52,15 @@ export default function AddressesClientShell() {
             <AddressCard
               key={address.id}
               address={address}
-              onEdit={handleEdit}
+              onEdit={() => handleEdit(address)}
               onDelete={handleDelete}
             />
           ))}
         </div>
+      )}
+
+      {modalState.open && (
+        <AddressFormModal address={modalState.address} onClose={closeModal} />
       )}
     </div>
   );

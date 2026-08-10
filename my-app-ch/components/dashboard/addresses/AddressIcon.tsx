@@ -1,7 +1,7 @@
-import { Address } from "@/interfaces/dashboard/address/types";
-import { JSX } from "react/jsx-runtime";
+import { AddressIconType } from '@/lib/addresses/addresses.api';
+import { JSX } from 'react/jsx-runtime';
 
-const ICONS: Record<Address['icon'], JSX.Element> = {
+const ICONS: Record<AddressIconType, JSX.Element> = {
   home: (
     <svg width={28} height={28} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
       <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z" />
@@ -22,6 +22,6 @@ const ICONS: Record<Address['icon'], JSX.Element> = {
   ),
 };
 
-export default function AddressIcon({ variant }: { variant: Address['icon'] }) {
+export default function AddressIcon({ variant }: { variant: AddressIconType }) {
   return <span className="addr-card__icon">{ICONS[variant]}</span>;
 }

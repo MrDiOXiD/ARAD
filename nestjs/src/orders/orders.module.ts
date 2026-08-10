@@ -9,6 +9,8 @@ import { AuditModule } from '../audit/audit.module';
 import { AuditService } from '../audit/audit.services';
 import { ProductEntity } from '@/products/entities/product.entity';
 import { ProductsModule } from '@/products/products.module';
+import { UserAddressEntity } from '@/addressess/entities/user-address.entity';
+import { DeliveryModule } from '@/delivery/delivery.module';
 
 
 @Module({
@@ -18,7 +20,9 @@ import { ProductsModule } from '@/products/products.module';
       ShippingEntity,
       OrderProductsEntity,
       ProductEntity,
+      UserAddressEntity
     ]),
+    DeliveryModule,
     ProductsModule,
     forwardRef(() => AuditModule),
   ],

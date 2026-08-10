@@ -14,6 +14,7 @@ import { Repository } from 'typeorm';
 import { PaymentEntity } from '../entities/payment.entity';
 import { PaymentStatus } from '../enums/payment-status.enum';
 import { OrdersService } from '@/orders/services/orders.service';
+import { OrderEntity } from '@/orders/entities/order.entity';
 import { UserEntity } from '@/users/entities/user.entity';
 import { OrderStatus } from '@/utils/common/order.enum';
 import { normalizeError } from '@/utils/errors/normalize-error.util';
@@ -55,6 +56,13 @@ export class PaymentService {
     if (!order) throw new NotFoundException('Order not found');
     if (order.user.id !== user.id) throw new ForbiddenException('Not your order');
 
+    // COD orders never touch the payment gateway at all — order is
+    // already PROCESSING from creation, seller sees it in the admin
+    // panel, payment happens physically on delivery.
+    if (order.paymentMethod === 'cod') {
+      throw new BadRequestException('This order is cash-on-delivery — no payment gateway needed.');
+    }
+
     // Only PROCESSING orders can be paid — reject already-paid or cancelled ones
     if (order.status !== OrderStatus.PROCESSING) {
       throw new BadRequestException(`Order status is '${order.status}' — cannot initiate payment`);
@@ -83,10 +91,10 @@ export class PaymentService {
           amount:      amountInRials,
           callbackUrl: `${this.appUrl}/payment/callback`,
           description: `Order #${orderId}`,
-          orderId:     String(orderId), // sent to Zibal for reconciliation, returned in callback
-          mobile:      undefined,       // optional: add user.phone if your UserEntity has it
+          orderId:     String(orderId),
+          mobile:      undefined,
         }),
-        signal: AbortSignal.timeout(10_000), // 10 s — never hang indefinitely
+        signal: AbortSignal.timeout(10_000),
       });
       zibalData = await res.json() as typeof zibalData;
     } catch (err) {
@@ -102,8 +110,6 @@ export class PaymentService {
 
     const trackId = String(zibalData.trackId);
 
-    // Persist a PENDING payment record before redirecting the user
-    // If the server crashes between this save and the redirect, the trackId is preserved
     await this.paymentRepo.save(
       this.paymentRepo.create({
         trackId,
@@ -141,7 +147,6 @@ export class PaymentService {
     if (payment.user.id !== user.id) throw new ForbiddenException('Not your payment');
 
     // Idempotency: if already verified, return success without calling Zibal again
-    // Zibal allows verify to be called more than once but returns result=201 on repeats
     if (payment.status === PaymentStatus.VERIFIED) {
       return { success: true, alreadyVerified: true };
     }
@@ -171,7 +176,6 @@ export class PaymentService {
 
     if (isSuccess) {
       // Amount integrity check — what Zibal says was paid must match what we requested
-      // Prevents a tampered trackId from verifying a cheaper transaction
       if (zibalData.amount !== undefined) {
         const expectedRials = Math.round(Number(payment.amount) * 10);
         if (zibalData.amount !== expectedRials) {
@@ -186,23 +190,33 @@ export class PaymentService {
         }
       }
 
-      // Mark payment verified and order as paid atomically using the same transaction context
-      await this.paymentRepo.update(
-        { trackId },
-        {
+      const paidAtValue = zibalData.paidAt ? new Date(zibalData.paidAt) : new Date();
+
+      // Both writes happen atomically — a crash between them can never
+      // leave a VERIFIED payment attached to an order that doesn't
+      // reflect it. paymentRepo.manager gives us a transaction runner
+      // without needing a separate EntityManager injection.
+      //
+      // Fixed: this used to call ordersService.updateOrderStatus(...,
+      // { status: OrderStatus.SHIPPED }, user) — conflating "paid" with
+      // "physically shipped" (two different real-world events), and
+      // permanently blocking the real SHIPPED transition later since
+      // the state machine forbids re-entering a status. It also
+      // attributed a system-triggered change to the paying customer via
+      // updatedBy, misrepresenting the audit trail. paidAt is now the
+      // sole source of truth for "has this been paid" — the shipping
+      // state machine is untouched by payment confirmation.
+      await this.paymentRepo.manager.transaction(async (tx) => {
+        await tx.update(PaymentEntity, { trackId }, {
           status:          PaymentStatus.VERIFIED,
           zibalResultCode: zibalData.result,
-          paidAt:          zibalData.paidAt ? new Date(zibalData.paidAt) : new Date(),
-        },
-      );
+          paidAt:          paidAtValue,
+        });
 
-      // Move order to SHIPPED (or a PAID status if you add one) — only after DB is updated
-      // Do not mark order paid before the payment record is saved
-      await this.ordersService.updateOrderStatus(
-        payment.order.id,
-        { status: OrderStatus.SHIPPED },
-        user,
-      );
+        await tx.update(OrderEntity, { id: payment.order.id }, {
+          paidAt: paidAtValue,
+        });
+      });
 
       this.logger.log(
         `Payment verified: trackId=${trackId} orderId=${payment.order.id} userId=${user.id}`,

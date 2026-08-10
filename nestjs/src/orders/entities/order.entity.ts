@@ -1,4 +1,8 @@
-import { UserEntity } from '@/users/entities/user.entity';
+import { UserEntity } from "@/users/entities/user.entity";
+import { DeliveryMethodEntity } from "@/delivery/entities/delivery-method.entity";
+
+export type PaymentMethodType = "online" | "cod";
+
 import {
   Column,
   CreateDateColumn,
@@ -30,10 +34,26 @@ export class OrderEntity {
   @OneToOne(() => ShippingEntity, (shipping) => shipping.order, {
     cascade: true,
   })
+  @Column({ type: "timestamp", nullable: true })
+  paidAt?: Date;
+
   @JoinColumn()
   shippingAddress!: ShippingEntity;
   @OneToMany(() => OrderProductsEntity, (ord) => ord.order, { cascade: true })
   products!: OrderProductsEntity[];
   @ManyToOne(() => UserEntity, (user) => user.orders)
   user!: UserEntity;
+
+  @ManyToOne(() => DeliveryMethodEntity, { nullable: true })
+  @JoinColumn()
+  deliveryMethod?: DeliveryMethodEntity;
+
+  @Column({ type: "decimal", precision: 12, scale: 0, default: 0 })
+  deliveryFee!: string;
+
+  @Column({ type: "date" })
+  requestedDeliveryDate!: string; // 'YYYY-MM-DD'
+
+  @Column({ type: "varchar", length: 10, default: "online" })
+  paymentMethod!: PaymentMethodType;
 }

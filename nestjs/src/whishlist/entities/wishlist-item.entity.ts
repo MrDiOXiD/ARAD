@@ -2,7 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  Index,
+  Index,  
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -19,18 +19,14 @@ export class WishlistItemEntity {
 
   @Index()
   @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
-  @JoinColumn()
+  @JoinColumn({ name: 'userId' })
   userId!: UserEntity;
 
   @ManyToOne(() => ProductEntity, { onDelete: 'CASCADE' })
-  @JoinColumn()
+  @JoinColumn({ name: 'productId' })
   productId!: ProductEntity;
 
   @CreateDateColumn()
   createdAt!: Date;
-
-@ManyToOne(() => UserEntity, (user) => user.id, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'userId' })
-  user!: UserEntity;
 
 }

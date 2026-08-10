@@ -1,16 +1,17 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { WishlistController } from './controllers/wishlist.controller';
-import { WishlistService } from './services/wishlist.service';
 import { WishlistItemEntity } from './entities/wishlist-item.entity';
+import { WishlistService } from './services/wishlist.service';
+import { WishlistController } from './controllers/wishlist.controller';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([WishlistItemEntity]),
-    // We do NOT import UsersModule here to maintain a clean boundary.
+    // If AuthenticationGuard needs JwtService/ConfigService and those
+    // aren't provided by a global module already in your app, add
+    // them here — same config as UsersModule's JwtModule.registerAsync.
   ],
   controllers: [WishlistController],
   providers: [WishlistService],
-  exports: [WishlistService], // Export if other modules (like Analytics) need to query wishlist counts
 })
 export class WishlistModule {}

@@ -3,33 +3,48 @@
 import { useState } from 'react';
 import WishlistHeader from './WishlistHeader';
 import WishlistGrid from './WishlistGrid';
-import { WishlistItem } from '@/interfaces/dashboard/whishlist/wishlist';
-import { WISHLIST_ITEMS } from '@/utils/mockData/wishlistData';
-
+import * as wishlistApi from '@/lib/whislist/wishlist.api';   // adjust path to match your actual file
+import { useQueryClient } from '@tanstack/react-query';
+import { useWishlist } from '@/hooks/useWishlist';
 
 export default function WishlistClientShell() {
-  const [items, setItems]           = useState<WishlistItem[]>(WISHLIST_ITEMS);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  // Real backend data instead of WISHLIST_ITEMS mock — ids here are
+  // numbers (matching WishlistItemResponseDto), not the strings the
+  // old mock data used. WishlistGrid/WishlistCard's prop types need
+  // updating to number ids too if they still expect strings.
+  const { items, isLoading } = useWishlist();
+  const queryClient = useQueryClient();
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
-  const handleSelect = (id: string, checked: boolean) =>
+
+console.log(items);
+
+
+  const handleSelect = (id: number, checked: boolean) =>
     setSelectedIds((prev) =>
       checked ? [...prev, id] : prev.filter((x) => x !== id),
     );
 
-  const handleRemove = (id: string) => {
-    setItems((prev) => prev.filter((item) => item.id !== id));
-    setSelectedIds((prev) => prev.filter((x) => x !== id));
+  const handleRemove = async (productId: number) => {
+    await wishlistApi.removeFromWishlist(productId);
+    queryClient.invalidateQueries({ queryKey: ['wishlist'] });
+    setSelectedIds((prev) => prev.filter((x) => x !== productId));
   };
 
-  const handleDeleteSelected = () => {
-    setItems((prev) => prev.filter((item) => !selectedIds.includes(item.id)));
+  const handleDeleteSelected = async () => {
+    await Promise.all(selectedIds.map((productId) => wishlistApi.removeFromWishlist(productId)));
+    queryClient.invalidateQueries({ queryKey: ['wishlist'] });
     setSelectedIds([]);
   };
 
-  const handleAddToCart = (id: string) => {
-    // TODO: connect to cart context / API
-    console.log('Add to cart:', id);
+  const handleAddToCart = (productId: number) => {
+    // TODO: connect to your existing cart context/redux slice
+    console.log('Add to cart:', productId);
   };
+
+  if (isLoading) {
+    return <div className="wl-page__loading" aria-busy="true" />;
+  }
 
   return (
     <div className="wl-page" dir="rtl">

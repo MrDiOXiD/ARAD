@@ -20,6 +20,8 @@ import { OrdersModule } from './orders/orders.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { PaymentModule } from './payment/payment.module';
 import { WishlistModule } from './whishlist/whishlist.module';
+import { AddressesModule } from './addressess/addresses.module';
+import { DeliveryModule } from './delivery/delivery.module';
 
 @Module({
   imports: [
@@ -37,7 +39,9 @@ import { WishlistModule } from './whishlist/whishlist.module';
     OrdersModule,
     ReviewsModule,
     PaymentModule,
-    WishlistModule
+    WishlistModule,
+    AddressesModule,
+    DeliveryModule,
   
   ],
 })

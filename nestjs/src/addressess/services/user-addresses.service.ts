@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserAddressEntity } from '../entities/user-address.entity';
-import { CreateUserAddressDto, UpdateUserAddressDto } from '../dto/user-address.dto';
+import {  CreateUserAddressDto, UpdateUserAddressDto, UserAddressResponseDto } from '../dto/user-address.dto';
 import { UserEntity } from '@/users/entities/user.entity';
 
 @Injectable()
@@ -16,12 +16,14 @@ export class UserAddressesService {
     private readonly addressRepository: Repository<UserAddressEntity>,
   ) {}
 
-  async findAllForUser(userId: number): Promise<UserAddressEntity[]> {
-    return this.addressRepository.find({
-      where: { user: { id: userId } },
-      order: { isDefault: 'DESC', createdAt: 'DESC' },
-    });
-  }
+async findAllForUser(userId: number): Promise<UserAddressResponseDto[]> {
+  const rows = await this.addressRepository.find({
+    where: { user: { id: userId } },
+    order: { isDefault: 'DESC', createdAt: 'DESC' },
+  });
+  return rows.map((row) => this.toResponseDto(row));
+}
+
 
   /**
    * Loads one address and verifies it belongs to the requesting user.
@@ -46,42 +48,46 @@ export class UserAddressesService {
     return address;
   }
 
-  async create(user: UserEntity, dto: CreateUserAddressDto): Promise<UserAddressEntity> {
-    const address = this.addressRepository.create({ ...dto, user });
+  async create(user: UserEntity, dto: CreateUserAddressDto): Promise<UserAddressResponseDto> {
+  const address = this.addressRepository.create({ ...dto, user });
 
-    if (dto.isDefault) {
-      await this.clearExistingDefault(user.id);
-    }
-
-    return this.addressRepository.save(address);
+  if (dto.isDefault) {
+    await this.clearExistingDefault(user.id);
   }
+
+  const saved = await this.addressRepository.save(address);
+  return this.toResponseDto(saved);
+}
+
 
   async update(
-    addressId: number,
-    userId: number,
-    dto: UpdateUserAddressDto,
-  ): Promise<UserAddressEntity> {
-    const address = await this.findOwned(addressId, userId);
+  addressId: number,
+  userId: number,
+  dto: UpdateUserAddressDto,
+): Promise<UserAddressResponseDto> {
+  const address = await this.findOwned(addressId, userId);
 
-    if (dto.isDefault) {
-      await this.clearExistingDefault(userId);
-    }
-
-    Object.assign(address, dto);
-    return this.addressRepository.save(address);
+  if (dto.isDefault) {
+    await this.clearExistingDefault(userId);
   }
+
+  Object.assign(address, dto);
+  const saved = await this.addressRepository.save(address);
+  return this.toResponseDto(saved);
+}
 
   async remove(addressId: number, userId: number): Promise<void> {
     const address = await this.findOwned(addressId, userId);
     await this.addressRepository.remove(address);
   }
 
-  async setDefault(addressId: number, userId: number): Promise<UserAddressEntity> {
-    const address = await this.findOwned(addressId, userId);
-    await this.clearExistingDefault(userId);
-    address.isDefault = true;
-    return this.addressRepository.save(address);
-  }
+async setDefault(addressId: number, userId: number): Promise<UserAddressResponseDto> {
+  const address = await this.findOwned(addressId, userId);
+  await this.clearExistingDefault(userId);
+  address.isDefault = true;
+  const saved = await this.addressRepository.save(address);
+  return this.toResponseDto(saved);
+}
 
   /** Keeps "at most one default address per user" true before setting a new one. */
   private async clearExistingDefault(userId: number): Promise<void> {
@@ -89,5 +95,10 @@ export class UserAddressesService {
       { user: { id: userId }, isDefault: true },
       { isDefault: false },
     );
+  }
+  
+  private toResponseDto(entity: UserAddressEntity): UserAddressResponseDto {
+    const { user, ...rest } = entity;
+    return rest;
   }
 }

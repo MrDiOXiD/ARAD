@@ -8,7 +8,7 @@ export interface WishlistProduct {
 }
 
 export interface WishlistItem {
-  id: number;
+  productId: number;
   product: WishlistProduct;
   createdAt: string;
 }

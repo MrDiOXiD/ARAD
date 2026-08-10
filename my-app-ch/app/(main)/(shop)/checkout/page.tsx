@@ -1,83 +1,101 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import CheckoutStepper from '@/components/checkout/CheckoutStepper';
 import DeliveryAddressSection from '@/components/checkout/DeliveryAddressSection';
-import ShippingMethodSection from '@/components/checkout/ShippingMethodSection';
+import DeliveryMethodSection from '@/components/checkout/DeliveryMethodSection';
+import DeliveryCalendar from '@/components/checkout/DeliveryCalendar';
 import PaymentMethodSection from '@/components/checkout/PaymentMethodSection';
 import OrderSummary from '@/components/checkout/OrderSummary';
 import TrustBadges from '@/components/checkout/TrustBadges';
-import {
-  CheckoutAddress,
-  OrderItem,
-  PaymentMethod,
-  ShippingMethodOption,
-  ShippingTimeOption,
-  StepperStep,
-} from '@/interfaces/checkout/types';
+import { useAddresses } from '@/hooks/useAddresses';
+import { useAppSelector, useAppDispatch } from '@/store-redux/hooks';
+import { clearCart } from '@/store-redux/features/cart/cartSlice';
+import { createOrder, initiatePayment } from '@/lib/order/orders.api';
+import { ApiError } from '@/lib/auth/authFetch';
 import '@/styles/components/checkout.css';
-import '@/styles/components/cart.css'
-import CheckoutStepper from '@/components/checkout/CheckoutStepper';
+import '@/styles/components/cart.css';
+import '@/styles/components/delivery-calendar.css';
 
-
-const STEPS: StepperStep[] = [
-  { key: 'cart', label: 'سبد خرید', icon: 'bi-cart3', status: 'done' },
-  { key: 'shipping-info', label: 'اطلاعات ارسال', icon: 'bi-truck', status: 'active' },
-  { key: 'payment', label: 'پرداخت', icon: 'bi-credit-card-2-front', status: 'upcoming' },
-  { key: 'complete', label: 'تکمیل سفارش', icon: 'bi-check2', status: 'upcoming' },
-];
-
-const ADDRESSES: CheckoutAddress[] = [
-  {
-    id: 'home',
-    tag: 'منزل',
-    name: 'حسام محمدی',
-    phone: '۰۹۱۳ ۱۲۳ ۴۵۶۷',
-    addressLine: 'تهران، خیابان شریعتی، خیابان ظفر، پلاک ۱۰، واحد ۳',
-    postalCode: '۱۹۶۷۸۳۴۵۱۱',
-  },
-  {
-    id: 'work',
-    tag: 'محل کار',
-    name: 'حسام محمدی',
-    phone: '۰۹۱۳ ۱۲۳ ۴۵۶۷',
-    addressLine: 'تهران، میدان ونک، خیابان ملاصدرا، پلاک ۱۰، واحد ۲',
-    postalCode: '۱۹۶۷۸۳۴۵۱۱',
-  },
-];
-
-const SHIPPING_METHODS: ShippingMethodOption[] = [
-  { value: 'snapp', label: 'ارسال با اسنپ پیک', icon: 'bi-truck' },
-  { value: 'post', label: 'ارسال با پست پیشتاز', icon: 'bi-truck' },
-];
-
-const SHIPPING_TIMES: ShippingTimeOption[] = [
-  { value: 'sun-12-16', label: 'یکشنبه بیست و یکم، ۱۲ تا ۱۶' },
-  { value: 'mon-9-13', label: 'دوشنبه بیست و دوم، ۹ تا ۱۳' },
-];
-
-const ORDER_ITEMS: OrderItem[] = [
-  { id: '1', title: 'لامپ LED اشکال مدل E27، ۱۲ وات نور گرم', qty: 2, price: 740000 },
-  { id: '2', title: 'خودکار شیابومی مدل MZXB-01WC', qty: 1, price: 920000 },
-  { id: '3', title: 'سیم و کابل برق مسی ۳×۱.۵ میلی‌متر', qty: 1, price: 1280000 },
+const STEPS = [
+  { key: 'cart', label: 'سبد خرید', icon: 'bi-cart3', status: 'done' as const },
+  { key: 'shipping-info', label: 'اطلاعات ارسال', icon: 'bi-truck', status: 'active' as const },
+  { key: 'payment', label: 'پرداخت', icon: 'bi-credit-card-2-front', status: 'upcoming' as const },
+  { key: 'complete', label: 'تکمیل سفارش', icon: 'bi-check2', status: 'upcoming' as const },
 ];
 
 export default function CheckoutPage() {
-  const [selectedAddress, setSelectedAddress] = useState('work');
-  const [shippingMethod, setShippingMethod] = useState(SHIPPING_METHODS[0].value);
-  const [shippingTime, setShippingTime] = useState(SHIPPING_TIMES[0].value);
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('online');
-  const [discount, setDiscount] = useState(150000);
+  const router = useRouter();
+  const dispatch = useAppDispatch();
 
-  const totals = useMemo(() => {
-    const subtotal = ORDER_ITEMS.reduce((sum, item) => sum + item.price * item.qty, 0);
-    const shippingFee = 65000;
-    return {
+  // Real cart, not a placeholder. NOTE: assumes CartItem has
+  // `unitPrice` (matching your earliest observed cart shape) — if the
+  // real field name in interfaces/cart/types differs, tell me and
+  // this is a one-line fix.
+  const cartItems = useAppSelector((state) => state.cart.items);
+
+  const { addresses, isLoading: addressesLoading } = useAddresses();
+  const selectedAddress = addresses[0] ?? null; // default, or most recent — see earlier note
+
+  const [deliveryMethodId, setDeliveryMethodId] = useState<number | null>(null);
+  const [deliveryFeeEstimate, setDeliveryFeeEstimate] = useState(0);
+  const [deliveryDate, setDeliveryDate] = useState<string | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<'online' | 'cod'>('online');
+  const [submitError, setSubmitError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const totalQuantity = cartItems.reduce((sum, i) => sum + i.quantity, 0);
+  // Client-side subtotal is DISPLAY ONLY — the authoritative price is
+  // always recalculated server-side in calculateTotalPrice(), which
+  // is what actually gets charged. A tampered client value here can
+  // only make the UI look wrong, never affect what's billed.
+  const subtotal = cartItems.reduce((sum, i) => sum + i.unitPrice * i.quantity, 0);
+
+  const totals = useMemo(
+    () => ({
       subtotal,
-      shippingFee,
-      discount,
-      total: subtotal + shippingFee - discount,
-    };
-  }, [discount]);
+      shippingFee: deliveryFeeEstimate,
+      discount: 0,
+      total: subtotal + deliveryFeeEstimate,
+    }),
+    [subtotal, deliveryFeeEstimate],
+  );
+
+  const canSubmit =
+    Boolean(selectedAddress) && Boolean(deliveryMethodId) && Boolean(deliveryDate) && cartItems.length > 0;
+
+  async function handleSubmit() {
+    if (!canSubmit || !selectedAddress || !deliveryMethodId || !deliveryDate) return;
+    setSubmitError('');
+    setIsSubmitting(true);
+
+    try {
+      const { order } = await createOrder({
+        addressId: selectedAddress.id,
+        orderProducts: cartItems.map((i) => ({ productId: i.id, order_quantity: i.quantity })),
+        deliveryMethodId,
+        requestedDeliveryDate: deliveryDate,
+        paymentMethod,
+      });
+
+      // Order is confirmed server-side at this point regardless of
+      // payment path — safe to clear the cart now.
+      dispatch(clearCart());
+
+      if (paymentMethod === 'cod') {
+        router.push(`/order-confirmed/${order.id}?method=cod`);
+        return;
+      }
+
+      const { payUrl } = await initiatePayment(order.id);
+      window.location.href = payUrl;
+    } catch (err) {
+      setSubmitError(err instanceof ApiError ? err.message : 'خطایی رخ داد. لطفاً دوباره تلاش کنید');
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   return (
     <div className="checkout-page" dir="rtl">
@@ -86,38 +104,42 @@ export default function CheckoutPage() {
 
         <div className="checkout-page__layout">
           <div className="checkout-main">
-            <DeliveryAddressSection
-              addresses={ADDRESSES}
-              selectedId={selectedAddress}
-              onSelect={setSelectedAddress}
-              onEdit={(id) => console.log('edit address', id)}
-              onAddNew={() => console.log('add new address')}
+            {addressesLoading ? (
+              <div className="checkout-card" aria-busy="true" />
+            ) : (
+              <DeliveryAddressSection
+                addresses={addresses}
+                selectedId={selectedAddress?.id ?? ''}
+                onSelect={() => {}}
+                onEdit={() => router.push('/dashboard/addresses')}
+                onAddNew={() => router.push('/dashboard/addresses')}
+              />
+            )}
+
+            <DeliveryMethodSection
+              selectedId={deliveryMethodId}
+              onSelect={(id, fee) => {
+                setDeliveryMethodId(id);
+                setDeliveryFeeEstimate(fee);
+              }}
+              totalQuantity={totalQuantity}
             />
 
-            <ShippingMethodSection
-              methods={SHIPPING_METHODS}
-              times={SHIPPING_TIMES}
-              selectedMethod={shippingMethod}
-              selectedTime={shippingTime}
-              onMethodChange={setShippingMethod}
-              onTimeChange={setShippingTime}
-            />
+            <DeliveryCalendar selectedDate={deliveryDate} onSelect={setDeliveryDate} />
 
             <PaymentMethodSection selected={paymentMethod} onSelect={setPaymentMethod} />
           </div>
 
           <OrderSummary
-            items={ORDER_ITEMS}
+            items={cartItems.map((i) => ({ id: String(i.id), title: i.title, qty: i.quantity, price: i.unitPrice }))}
             totals={totals}
-            onApplyPromo={(code) => console.log('apply promo', code)}
-            onConfirm={() => console.log('confirm checkout', {
-              selectedAddress,
-              shippingMethod,
-              shippingTime,
-              paymentMethod,
-            })}
+            onApplyPromo={() => {}}
+            onConfirm={handleSubmit}
           />
         </div>
+
+        {submitError && <p className="addr-modal__form-error" role="alert">{submitError}</p>}
+        {isSubmitting && <p aria-busy="true">در حال ثبت سفارش...</p>}
 
         <TrustBadges />
       </div>

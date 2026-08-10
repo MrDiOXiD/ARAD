@@ -1,14 +1,13 @@
 'use client';
 
-import { WishlistItem } from "@/interfaces/dashboard/whishlist/wishlist";
-
+import { WishlistItem } from '@/lib/whislist/wishlist.api'; // was the mock interfaces path
 
 interface WishlistCardProps {
   item: WishlistItem;
   isSelected: boolean;
-  onSelect: (id: string, checked: boolean) => void;
-  onRemove: (id: string) => void;
-  onAddToCart: (id: string) => void;
+  onSelect: (id: number, checked: boolean) => void;
+  onRemove: (id: number) => void;
+  onAddToCart: (id: number) => void;
 }
 
 export default function WishlistCard({
@@ -18,44 +17,52 @@ export default function WishlistCard({
   onRemove,
   onAddToCart,
 }: WishlistCardProps) {
+  // item.id is the wishlist row's own id — only useful as a React key.
+  // Every action (remove, add-to-cart, select) needs to act on the
+  // actual PRODUCT, so those use item.productId throughout instead.
+  const { productId, product } = item;
+
+  // price comes back from Postgres as a string ("130000.00"), not a
+  // number, even though the type says number — numeric/decimal columns
+  // always do this via pg. Must convert before formatting or it
+  // silently does string concatenation instead of number formatting.
+  const priceDisplay = Number(product.price).toLocaleString('fa-IR');
+
   return (
     <article className="wl-card">
       {/* Top-left heart (remove from wishlist) */}
       <button
         type="button"
         className="wl-card__heart-btn"
-        onClick={() => onRemove(item.id)}
-        aria-label={`حذف ${item.title} از علاقه‌مندی‌ها`}
+        onClick={() => onRemove(productId)}
+        aria-label={`حذف ${product.title} از علاقه‌مندی‌ها`}
       >
         <i className="bi bi-heart-fill" aria-hidden="true" />
       </button>
 
       {/* Top-right checkbox */}
-      <label className="wl-card__checkbox-wrap" aria-label={`انتخاب ${item.title}`}>
+      <label className="wl-card__checkbox-wrap" aria-label={`انتخاب ${product.title}`}>
         <input
           type="checkbox"
           className="wl-card__checkbox"
           checked={isSelected}
-          onChange={(e) => onSelect(item.id, e.target.checked)}
+          onChange={(e) => onSelect(productId, e.target.checked)}
         />
       </label>
 
-      {/* Product image */}
-      <div
-        className="wl-card__img"
-        style={{ backgroundColor: item.bgColor }}
-        aria-label={item.title}
-      >
-        <span className="wl-card__img-icon" aria-hidden="true">
-          {item.icon}
-        </span>
+      {/* Product image — no icon/bgColor field exists on the real
+          product data (those were mock-only). Using a placeholder
+          until you tell me the real image field name on ProductEntity
+          to swap this for an actual <img>. */}
+      <div className="wl-card__img" aria-label={product.title}>
+        <i className="bi bi-image wl-card__img-icon" aria-hidden="true" />
       </div>
 
       {/* Info */}
       <div className="wl-card__body">
-        <p className="wl-card__title">{item.title}</p>
+        <p className="wl-card__title">{product.title}</p>
         <p className="wl-card__price">
-          <span className="wl-card__price-amount">{item.price}</span>
+          <span className="wl-card__price-amount">{priceDisplay}</span>
           <span className="wl-card__price-unit"> تومان</span>
         </p>
       </div>
@@ -65,8 +72,8 @@ export default function WishlistCard({
         <button
           type="button"
           className="wl-card__cart-btn"
-          onClick={() => onAddToCart(item.id)}
-          aria-label={`افزودن ${item.title} به سبد خرید`}
+          onClick={() => onAddToCart(productId)}
+          aria-label={`افزودن ${product.title} به سبد خرید`}
         >
           <i className="bi bi-cart2" aria-hidden="true" />
         </button>
