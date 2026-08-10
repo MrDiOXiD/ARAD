@@ -39,7 +39,7 @@
     "bcrypt": "^5.1.0",
     "cache-manager": "^5.7.6",
     "class-transformer": "^0.5.1",
-    "class-validator": "^0.15.1",
+    "class-validator": "^0.14.1",
     "cloudinary": "^2.10.0",
     "compression": "^1.7.4",
     "cookie": "^2.0.1",
