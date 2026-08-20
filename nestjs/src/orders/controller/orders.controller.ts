@@ -29,6 +29,7 @@ import { AuthenticationGuard } from '../../utils/guard/auth.guard';
 import { Roles } from '../../utils/common/Roles.enum';
 import { AuthorizedGuard } from '../../utils/guard/authorized-role.guard';
 import { UserEntity } from '@/users/entities/user.entity';
+import { OrderSummaryResponseDto } from '../dto/order-summary-response.dto';
 
 @ApiTags('Orders')
 @ApiBearerAuth()
@@ -38,7 +39,7 @@ export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Post()
-  // @UseGuards(AuthenticationGuard)
+  @UseGuards(AuthenticationGuard)
   @ApiOperation({
     summary: 'Create a new order',
     description:
@@ -119,4 +120,21 @@ export class OrdersController {
   ) {
     return await this.ordersService.cancelOrder(id, user);
   }
+
+@Get('mine/:id(\\d+)')
+@UseGuards(AuthenticationGuard)
+@ApiBearerAuth()
+@ApiOperation({ summary: "Get one of the current user's own orders (summary)" })
+@ApiOkResponse({ type: OrderSummaryResponseDto })
+@ApiResponse({ status: 404, description: 'Not Found. No such order on this account.' })
+async findMyOrder(
+  @Param('id', ParseIntPipe) id: number,
+  @CurrentUser() user: UserEntity,
+) {
+  return this.ordersService.getOrderSummaryForUser(id, user.id);
+}
+
+
+
+
 }

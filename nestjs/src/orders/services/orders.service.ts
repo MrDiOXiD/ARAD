@@ -25,9 +25,14 @@ import { ProductsService } from "@/products/services/products.service";
 import { OrderProductsEntity } from "../entities/order-product.entity";
 import { DeliveryMethodsService } from "@/delivery/services/delivery-methods.service";
 import { UserAddressEntity } from "@/addressess/entities/user-address.entity";
+import { OrderSummaryResponseDto } from "../dto/order-summary-response.dto";
 
 @Injectable()
 export class OrdersService {
+  async setPaymentMethod(orderId: number, method: "online" | "cod"): Promise<void> {
+    await this.orderRepository.update({ id: orderId }, { paymentMethod: method });
+  }
+
   constructor(
     @InjectRepository(OrderEntity)
     private readonly orderRepository: Repository<OrderEntity>,
@@ -78,7 +83,7 @@ export class OrdersService {
     order.deliveryFee = String(deliveryFee);
     order.requestedDeliveryDate = createOrderDto.requestedDeliveryDate;
     order.paymentMethod = createOrderDto.paymentMethod;
-    order.total_price = (totalOrderPrice + deliveryFee); // ADD THIS — the grand total, since that's what actually gets charged
+    order.total_price = totalOrderPrice + deliveryFee; // ADD THIS — the grand total, since that's what actually gets charged
 
     order.products = createOrderDto.orderProducts.map((productDto) => {
       const orderProduct = new OrderProductsEntity();
@@ -292,5 +297,34 @@ export class OrdersService {
     }
 
     throw new BadRequestException("Either addressId or shippingAddress is required.");
+  }
+
+  async getOrderSummaryForUser(orderId: number, userId: number): Promise<OrderSummaryResponseDto> {
+    const order = await this.findOne(orderId);
+    if (!order || order.user.id !== userId) {
+      // 404, not 403 — don't confirm another user's order id exists.
+      throw new NotFoundException(`Order ${orderId} not found.`);
+    }
+
+    const subtotal = order.products.reduce(
+      (sum, p) => sum + Number(p.product.price) * p.order_quantity,
+      0,
+    );
+
+    return {
+      id: order.id,
+      status: order.status,
+      paymentMethod: order.paymentMethod,
+      paidAt: order.paidAt ?? null,
+      orderAt: order.orderAt,
+      products: order.products.map((p) => ({
+        title: p.product.title,
+        quantity: p.order_quantity,
+        price: Number(p.product.price),
+      })),
+      subtotal,
+      deliveryFee: Number(order.deliveryFee),
+      total: Number(order.total_price),
+    };
   }
 }

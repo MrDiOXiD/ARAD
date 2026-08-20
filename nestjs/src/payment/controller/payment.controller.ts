@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  Param,
+  ParseIntPipe,
   Post,
   Query,
   Redirect,
@@ -114,4 +116,18 @@ export class PaymentController {
   async adminGetPayment(@Query('trackId') trackId: string) {
     return this.paymentService.getPaymentByTrackId(trackId);
   }
+  
+
+@Post('switch-to-cod/:orderId(\\d+)')
+@UseGuards(AuthenticationGuard)
+@ApiBearerAuth()
+@ApiOperation({ summary: 'Switch an unpaid online order to cash-on-delivery' })
+@ApiResponse({ status: 400, description: 'Order is already paid' })
+async switchToCod(
+  @Param('orderId', ParseIntPipe) orderId: number,
+  @CurrentUser() user: UserEntity,
+) {
+  return this.paymentService.switchToCod(orderId, user);
+}
+
 }

@@ -21,26 +21,32 @@ import { OrderStatus } from "../../utils/common/order.enum";
 export class OrderEntity {
   @PrimaryGeneratedColumn()
   id!: number;
+
   @CreateDateColumn()
   orderAt!: Date;
+
   @Column({ type: "timestamp", nullable: true })
   shippedAt!: Date | null;
+
   @Column({ type: "enum", enum: OrderStatus, default: OrderStatus.PROCESSING })
   status!: string;
+
   @Column({ type: "decimal", precision: 10, default: 0, scale: 2 })
   total_price!: number;
+
   @ManyToOne(() => UserEntity, (user) => user.orderUpdatedBy)
   updatedBy!: UserEntity;
-  @OneToOne(() => ShippingEntity, (shipping) => shipping.order, {
-    cascade: true,
-  })
+
+  @OneToOne(() => ShippingEntity, (shipping) => shipping.order, { cascade: true })
+  @JoinColumn()
+  shippingAddress!: ShippingEntity;
+
   @Column({ type: "timestamp", nullable: true })
   paidAt?: Date;
 
-  @JoinColumn()
-  shippingAddress!: ShippingEntity;
   @OneToMany(() => OrderProductsEntity, (ord) => ord.order, { cascade: true })
   products!: OrderProductsEntity[];
+
   @ManyToOne(() => UserEntity, (user) => user.orders)
   user!: UserEntity;
 

@@ -1,5 +1,6 @@
+"use client"
 import { OrderItem, OrderTotals } from '@/interfaces/checkout/types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface OrderSummaryProps {
   items: OrderItem[];
@@ -16,6 +17,14 @@ export default function OrderSummary({ items, totals, onApplyPromo, onConfirm }:
   const [promo, setPromo] = useState('');
   const [agreed, setAgreed] = useState(true);
   const itemCount = items.reduce((sum, item) => sum + item.qty, 0);
+
+// 1. Add this state
+  const [isMounted, setIsMounted] = useState(false);
+
+  // 2. Set it to true once the component mounts in the browser
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   return (
     <aside className="order-summary">

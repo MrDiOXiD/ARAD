@@ -27,7 +27,6 @@ export class ShippingEntity {
 
   @Column()
   city!: string;
-  @OneToOne(() => OrderEntity, (order) => order.shippingAddress)
-  @JoinColumn()
-  order!: OrderEntity;
+@OneToOne(() => OrderEntity, (order) => order.shippingAddress)
+order!: OrderEntity; // @JoinColumn() removed — OrderEntity.shippingAddress already owns the FK
 }
