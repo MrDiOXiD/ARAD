@@ -72,7 +72,7 @@ export class PaymentController {
   })
   @ApiResponse({ status: 302, description: 'Redirects to frontend /payment/result page' })
   async callback(@Query() query: ZibalCallbackDto) {
-    const frontendBase = process.env.FRONTEND_URL ?? 'http://localhost:3000';
+    const frontendBase = process.env.FRONTEND_URL ?? 'http://localhost:3010';
     const status = query.success === '1' ? 'pending-verify' : 'cancelled';
     return {
       url: `${frontendBase}/payment/result?trackId=${query.trackId}&status=${status}`,

@@ -66,7 +66,8 @@ export default function CheckoutPage() {
     Boolean(selectedAddress) && Boolean(deliveryMethodId) && Boolean(deliveryDate) && cartItems.length > 0;
 
   async function handleSubmit() {
-    if (!canSubmit || !selectedAddress || !deliveryMethodId || !deliveryDate) return;
+    if (!canSubmit || !selectedAddress || !deliveryMethodId || !deliveryDate) return console.log("didnt meet all the requirements!");
+    ;
     setSubmitError('');
     setIsSubmitting(true);
 
