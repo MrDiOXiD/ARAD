@@ -5,7 +5,7 @@ import { getBlurDataURL, numberFormat } from "@/utils/helper";
 import Image from "next/image";
 
 export default async function Table({ params }) {
-  const data = await getFetch(`/orders?${params}`);
+  const data = await getFetch(`/orders`);
 
   return (
     <>
@@ -22,7 +22,7 @@ export default async function Table({ params }) {
             </tr>
           </thead>
           <tbody>
-            {data?.orders.map((order) => (
+            {data?.map((order) => (
               <tr key={order.id}>
                 <td>{order.id}</td>
                 <td>{order.status}</td>
@@ -63,7 +63,7 @@ export default async function Table({ params }) {
                               </tr>
                             </thead>
                             <tbody>
-                              {order.order_items.map((item) => (
+                              {order?.map((item) => (
                                 <tr key={item.id}>
                                   <th>
                                     <Image

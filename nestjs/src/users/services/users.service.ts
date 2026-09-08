@@ -112,9 +112,14 @@ export class UserService {
   }
 
 async signIn(body: LoginUserDto, clientIp: string): Promise<IssuedSession> {
-  const { phoneNumber, password } = body;
-  const user = await this.findUserByPhoneNumber(phoneNumber);
+  const { phoneNumber, password  , email} = body;
+let user: UserEntity | null = null;
 
+if (phoneNumber) {
+  user = await this.findUserByPhoneNumber(phoneNumber);
+} else if (email) {
+  user = await this.findUserByEmail(email);
+}
   // Single vague message — never reveal whether the phone number or
   // password was wrong; that distinction is exactly what lets an
   // attacker enumerate registered phone numbers.

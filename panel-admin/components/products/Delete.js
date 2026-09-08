@@ -2,10 +2,10 @@
 
 import { deleteProduct } from "@/actions/products";
 import SubmitButton from "../SubmitButton";
-import { useFormState } from "react-dom";
+import { useActionState } from "react";
 
 export default function DeleteProduct({ id }) {
-  const [state, formAction] = useFormState(deleteProduct, {});
+  const [state, formAction] = useActionState(deleteProduct, {});
 
   return (
     <form action={formAction}>

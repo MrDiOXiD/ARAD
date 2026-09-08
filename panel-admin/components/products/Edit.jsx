@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
-import { useFormState } from "react-dom";
 import SubmitButton from "@/components/SubmitButton";
 import { useRouter } from "next/navigation";
 import { editProduct } from "@/actions/products";
@@ -18,7 +17,7 @@ import Image from "next/image";
 import { getBlurDataURL } from "@/utils/helper";
 
 export default function EditProduct({ product, categories }) {
-  const [state, formAction] = useFormState(editProduct, {});
+  const [state, formAction] = useActionState(editProduct, {});
   const router = useRouter();
   const [image, setImage] = useState(null);
   const primaryImageRef = useRef();
@@ -78,7 +77,7 @@ export default function EditProduct({ product, categories }) {
             <label className="form-label">تصویر اصلی</label>
 
             <div className={image ? "position-relative" : "d-none"}>
-              <img className="rounded" src={image} width={350} height={220} alt="image" />
+              <img className="rounded" src={product.primary_image} width={350} height={220} alt="image" />
               <div
                 className="position-absolute"
                 onClick={() => {
@@ -92,15 +91,17 @@ export default function EditProduct({ product, categories }) {
             </div>
 
             <div className={image === null ? "" : "d-none"}>
-              <Image
-                className="rounded mb-4"
-                src={product.primary_image}
-                placeholder="blur"
-                blurDataURL={getBlurDataURL()}
-                width={350}
-                height={220}
-                alt="product-image"
-              />
+              {product.primary_image ? (
+                <Image
+                  className="rounded mb-4"
+                  src={product.primary_image}
+                  placeholder="blur"
+                  blurDataURL={getBlurDataURL()}
+                  width={350}
+                  height={220}
+                  alt={product.name || "Product image"}
+                />
+              ) : null}
               <input
                 onChange={setPrimaryImage}
                 name="primary_image"

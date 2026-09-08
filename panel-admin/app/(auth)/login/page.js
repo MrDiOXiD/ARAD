@@ -9,8 +9,6 @@ import { toast } from "react-toastify";
 export default function LoginPage() {
   const [state, formAction] = useActionState(login, {});
   const router = useRouter();
-// console.log(state.loggedIn);
-console.log("logged in");
 
   useEffect(() => {
     toast(state?.message, { type: `${state?.status}` });

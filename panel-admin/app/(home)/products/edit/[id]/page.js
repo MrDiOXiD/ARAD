@@ -3,7 +3,7 @@ import { getFetch } from "@/utils/fetch";
 
 export default async function EditProductPage({ params }) {
   const product = await getFetch(`/products/${params.id}`);
-  const categories = await getFetch("/categories-list");
+  const categories = await getFetch("/categories");
 
   return (
     <>

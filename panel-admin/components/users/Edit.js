@@ -1,15 +1,15 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { useFormState } from "react-dom";
+import { useActionState, useEffect } from "react";
 import { toast } from "react-toastify";
 import SubmitButton from "../SubmitButton";
 import { editUser } from "@/actions/users";
 
 export default function EditUser({ user }) {
-  const [state, formAction] = useFormState(editUser, {});
+  const [state, formAction] = useActionState(editUser, {});
   const router = useRouter();
+  
 
   useEffect(() => {
     toast(state?.message, { type: `${state?.status}` });
@@ -22,7 +22,7 @@ export default function EditUser({ user }) {
     <form action={formAction} className="row gy-4">
       <div className="col-md-3">
         <label className="form-label">نام</label>
-        <input name="name" defaultValue={user.name} type="text" className="form-control" />
+        <input name="name" defaultValue={user.username} type="text" className="form-control" />
       </div>
       <div className="col-md-3">
         <label className="form-label">ایمیل</label>
@@ -32,7 +32,7 @@ export default function EditUser({ user }) {
         <label className="form-label">شماره تماس</label>
         <input
           name="cellphone"
-          defaultValue={user.cellphone}
+          defaultValue={user.phoneNumber}
           type="text"
           className="form-control"
         />

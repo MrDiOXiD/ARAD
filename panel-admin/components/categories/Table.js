@@ -4,7 +4,7 @@ import Paginate from "../Paginate";
 
 export default async function Table({ params }) {
   const data = await getFetch(`/categories?${params}`);
-console.log(data);
+console.(data);
 
   return (
     <>

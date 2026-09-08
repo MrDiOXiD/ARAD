@@ -4,7 +4,11 @@ import { getBlurDataURL, numberFormat } from "@/utils/helper";
 import Image from "next/image";
 
 export default async function ProductPage({ params }) {
-  const product = await getFetch(`/products/${params.id}`);
+      const { id } = await params;
+
+  const product = await getFetch(`/products/${id}`);
+  console.log(product);
+  
 
   return (
     <>
@@ -18,7 +22,7 @@ export default async function ProductPage({ params }) {
             <div className="col-md-3">
               <Image
                 className="rounded"
-                src={product.primary_image}
+                src={product.productImage}
                 placeholder="blur"
                 blurDataURL={getBlurDataURL()}
                 width={350}
@@ -31,17 +35,17 @@ export default async function ProductPage({ params }) {
 
         <div className="col-md-3">
           <label className="form-label">نام</label>
-          <input type="text" className="form-control" disabled placeholder={product.name} />
+          <input type="text" className="form-control" disabled placeholder={product.title} />
         </div>
 
         <div className="col-md-3">
           <label className="form-label">دسته بندی</label>
-          <input type="text" className="form-control" disabled placeholder={product.category} />
+          <input type="text" className="form-control" disabled placeholder={product.category.title} />
         </div>
 
         <div className="col-md-3">
           <label className="form-label">وضعیت</label>
-          <input type="text" className="form-control" disabled placeholder={product.status} />
+          <input type="text" className="form-control" disabled placeholder={product.isActive ? "فعال" : "غیرفعال"} />
         </div>
 
         <div className="col-md-3">
@@ -56,7 +60,7 @@ export default async function ProductPage({ params }) {
 
         <div className="col-md-3">
           <label className="form-label">تعداد</label>
-          <input type="text" className="form-control" disabled placeholder={product.quantity} />
+          <input type="text" className="form-control" disabled placeholder={product.stock} />
         </div>
 
         <div className="col-md-3">
@@ -65,7 +69,7 @@ export default async function ProductPage({ params }) {
             type="text"
             className="form-control"
             disabled
-            placeholder={numberFormat(product.sale_price)}
+            placeholder={numberFormat(product.discount)}
           />
         </div>
 
@@ -75,7 +79,7 @@ export default async function ProductPage({ params }) {
             type="text"
             className="form-control"
             disabled
-            placeholder={product.date_on_sale_from}
+            placeholder={product.discountStartDate}
           />
         </div>
 
@@ -85,7 +89,7 @@ export default async function ProductPage({ params }) {
             type="text"
             className="form-control"
             disabled
-            placeholder={product.date_on_sale_to}
+            placeholder={product.discountEndDate}
           />
         </div>
 
@@ -100,12 +104,12 @@ export default async function ProductPage({ params }) {
         </div>
 
         <div className="col-md-12">
-          {product.images.length > 0
+          {product.gallery > 0
             ? product.images.map((item) => (
                 <Image
+                src={product.productImage}
                   className="ms-3"
                   key={item.id}
-                  src={item.image}
                   placeholder="blur"
                   blurDataURL={getBlurDataURL()}
                   width={200}

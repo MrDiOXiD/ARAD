@@ -80,7 +80,6 @@ this.logger.log(`Creating new category: ${JSON.stringify(createCategoryDto)}`);
 
   async update(id: number, updateCategoryDto: UpdateCategoryDto) {
     const category = await this.findCategoryById(id);
-console.log(category , "2222222222222222222222222222222222222");
 
 if (updateCategoryDto.title !== undefined) {
   category.title = updateCategoryDto.title;

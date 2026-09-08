@@ -2,18 +2,21 @@ import DeleteUser from "@/components/users/Delete";
 import { getFetch } from "@/utils/fetch";
 
 export default async function UserPage({ params }) {
-  const user = await getFetch(`/users/${params.id}`);
+    const { id } = await params;
+    
+    const user = await getFetch(`/user/${id}`);
+    console.log(user);
 
   return (
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h4 className="fw-bold">کاربر : {user.name}</h4>
+        <h4 className="fw-bold">کاربر : {user.id}</h4>
       </div>
 
       <div className="row gy-4">
         <div className="col-md-3">
           <label className="form-label">نام</label>
-          <input disabled type="text" className="form-control" placeholder={user.name} />
+          <input disabled type="text" className="form-control" placeholder={user.username} />
         </div>
         <div className="col-md-3">
           <label className="form-label">ایمیل</label>
@@ -21,7 +24,7 @@ export default async function UserPage({ params }) {
         </div>
         <div className="col-md-3">
           <label className="form-label">شماره تماس</label>
-          <input disabled type="text" className="form-control" placeholder={user.cellphone} />
+          <input disabled type="text" className="form-control" placeholder={user.phoneNumber} />
         </div>
 
         <DeleteUser id={user.id} />

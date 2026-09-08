@@ -12,11 +12,10 @@ import {
 export class LoginUserDto {
   @ApiProperty({
     description: 'The registered email address of the user',
-    example: 'john.doe@example.com',
+    example: 'john.doae@example.com',
     format: 'email',
   })
   @IsString()
-  @IsNotEmpty()
   @IsOptional()
   @IsEmail({}, { message: 'Invalid email address' })
   email!: string;
@@ -42,7 +41,7 @@ export class LoginUserDto {
     example: '09123456789',
   })
   @IsString()
-  @IsNotEmpty() // Note: Change to @IsOptional() if users can login with EITHER email or phone, rather than requiring both
+  @IsOptional()
   @Matches(/^(?:0|\+98|0098)9\d{9}$/, {
     message: 'Phone number must be a valid Iranian mobile number (e.g., 09123456789, +989123456789, or 00989123456789)',
   })

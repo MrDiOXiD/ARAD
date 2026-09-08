@@ -17,7 +17,6 @@ export default function WishlistClientShell() {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
 
-console.log(items);
 
 
   const handleSelect = (id: number, checked: boolean) =>

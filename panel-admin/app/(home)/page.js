@@ -10,7 +10,7 @@ export default async function Home() {
         <h4 className="fw-bold">داشبورد</h4>
       </div>
 
-      <Chart dataChart={dataChart} />
+      {/* <Chart dataChart={dataChart} /> */}
     </>
   );
 }

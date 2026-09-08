@@ -16,7 +16,6 @@ async function login(state, formData) {
   }
 
   const data = await postFetchUnauth("/user/login", { email, password });
-console.log(data);
 
   if (data.user) {
      await cookies().set({
@@ -26,7 +25,6 @@ console.log(data);
       path: "/",
       maxAge: 60 * 60 * 24 * 7, // 1 week
     });
-    console.log(12);
     
 
     return {
@@ -43,8 +41,8 @@ console.log(data);
 }
 
 async function me() {
-  const token = cookies().get("token");
-
+const cookieStore = await cookies();
+const token = cookieStore.get("token");
   if (!token) {
     return {
       error: "Not Authorized",
@@ -68,8 +66,9 @@ async function logout() {
   const data = await postFetch("/auth/logout");
 
   if (data.status === "success") {
-    cookies().delete("token");
-    return {
+const cookieStore = await cookies();
+const token = cookieStore.delete("token");  
+  return {
       success: "You are logged out",
     };
   } else {
