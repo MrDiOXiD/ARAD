@@ -6,6 +6,7 @@
 @import './components/products.css';
 @import './components/footer.css';
 @import './components/singleProduct.css';
+@import './components/skeleton.css';
 
 /* ── Tailwind ──
    @layer base wraps Preflight so your component CSS

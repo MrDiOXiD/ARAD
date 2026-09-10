@@ -1,6 +1,9 @@
+"use client"
 import HeroBanner from '@/components/HeroBanner';
 import ProductSection from '@/components/product/ProductSection';
 import { Product } from '@/components/product/ProductCard';
+import { HomeSkeleton } from '@/components/Skeleton';
+import { useEffect, useState } from 'react';
 
 const latestProducts: Product[] = [
   { id: 1,  title: 'لامپ LED حبابی ۹ وات پارس شهاب',      price: '45000',   oldPrice: '58000',   badge: 'new', icon: 'bi-lightbulb'   },
@@ -28,12 +31,33 @@ const featuredProducts: Product[] = [
   { id: 22, title: 'کلید هوشمند وای‌فای سونوف مدل T3',     price: '790000',   oldPrice: '950000',  badge: 'new', icon: 'bi-phone'          },
 ];
 
-export default async function HomePage() {
+export default  function HomePage() {
+  const [isLoading, setIsLoading] = useState(true);
+  
+  useEffect(() => {
+    // simulate loading or fetch
+    setIsLoading(true);
+  }, []);
+
   return (
     <main>
-      <HeroBanner />
+      {isLoading ? <HomeSkeleton /> :  (  <>
+         <HeroBanner />
       <ProductSection title="جدیدترین‌ها"   products={latestProducts}   scroll />
       <ProductSection title="کالاهای منتخب" products={featuredProducts} />
+      </>
+      )
+      
+
+
+      
+      }
+
+<HomeSkeleton /> 
+      
+      {/* <HeroBanner /> */}
+      {/* <ProductSection title="جدیدترین‌ها"   products={latestProducts}   scroll />
+      <ProductSection title="کالاهای منتخب" products={featuredProducts} /> */}
     </main>
   );
 }
