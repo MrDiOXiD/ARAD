@@ -110,3 +110,9 @@
 
 /* ── Base ── */
 body { font-family: 'Vazirmatn', sans-serif; margin: 0; background: #f3f4f6; }
+
+/* ── Fixed mobile bottom tab bar ── */
+.mobile-tabbar {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.05);
+}
