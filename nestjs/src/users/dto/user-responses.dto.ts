@@ -22,6 +22,12 @@ export class SafeUser {
   @ApiProperty({ example: 'johndoe99' })
   username!: string;
 
+  @ApiProperty({ example: 'john' })
+  name!: string;
+
+  @ApiProperty({ example: 'doe' })
+  familyName!: string;
+
   @ApiProperty({ 
     example: [Roles.USER], 
     enum: Roles, 

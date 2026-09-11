@@ -1,0 +1,32 @@
+.skel {
+  background: #d9dce0;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+}
+.skel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.85), transparent);
+  animation: skel-shimmer 1.4s infinite;
+}
+@keyframes skel-shimmer { 100% { transform: translateX(100%); } }
+
+.skel-page { display: flex; flex-direction: column; gap: 20px; padding: 20px; }
+
+.skel-banners { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.skel-banner-sm, .skel-banner-lg, .skel-banner-tall { background: #f5f6f7; border-radius: 14px; padding: 14px; display: flex; align-items: flex-end; }
+.skel-banner-lg { grid-row: span 2; }
+.skel-tag { width: 90px; height: 22px; }
+
+.skel-row, .skel-grid { display: grid; gap: 14px; }
+.skel-row { grid-template-columns: repeat(7, 1fr); }
+.skel-grid { grid-template-columns: repeat(6, 1fr); }
+
+.skel-card { display: flex; flex-direction: column; gap: 8px; }
+.skel-img { width: 100%; aspect-ratio: 1; }
+.skel-line { height: 10px; width: 100%; }
+.skel-line--short { width: 60%; }
+.skel-btn { height: 24px; width: 80%; border-radius: 6px; }

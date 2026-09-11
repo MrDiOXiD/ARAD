@@ -97,6 +97,8 @@ export class UserService {
     // Return explicit shape matching the SafeUser class
     return {
       id: saved.id,
+      name: saved.name,
+      familyName: saved.familyName,
       phoneNumber: saved.phoneNumber,
       email: saved.email,
       username: saved.username,
@@ -167,6 +169,8 @@ async issueSession(user: UserEntity, clientIp: string): Promise<IssuedSession> {
     refreshToken,
     user: {
       id: user.id,
+      name: user.name,
+      familyName: user.familyName,
       phoneNumber: user.phoneNumber,
       username: user.username,
       email: user.email,
@@ -254,6 +258,8 @@ private async issueRotatedSession(
     refreshToken,
     user: {
       id: user.id,
+      name: user.name,
+      familyName: user.familyName,
       phoneNumber: user.phoneNumber,
       username: user.username,
       email: user.email,
@@ -280,6 +286,8 @@ async logout(rawToken: string): Promise<void> {
       id: user.id,
       email: user.email,
       phoneNumber: user.phoneNumber, // 👈 ADD THIS LINE
+      name: user.name,
+      familyName: user.familyName,
       username: user.username,
       roles: user.roles,
       createdAt: user.createdAt,

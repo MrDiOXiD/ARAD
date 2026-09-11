@@ -108,7 +108,23 @@
 }
 
 @media (max-width: 640px) {
-  .banner-grid { grid-template-columns: 1fr; }
-  .banner-card--tall  { min-height: 240px; }
-  .banner-card--short { min-height: 140px; }
+  /* Tall (center) card first, full width; the four short cards from the
+     left/right columns then flow as a 2-per-row grid underneath — this is
+     what the mobile mock shows, not five cards stacked full-width. */
+  .banner-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .banner-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .banner-col--center {
+    order: -1;
+    display: block;
+  }
+  .banner-card--tall  { min-height: 260px; }
+  .banner-card--short { min-height: 150px; }
 }

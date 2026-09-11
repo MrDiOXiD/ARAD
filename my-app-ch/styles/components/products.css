@@ -135,5 +135,28 @@
 }
 @media (max-width: 640px) {
   .products-grid { grid-template-columns: repeat(2, 1fr); }
-  .products-scroll .product-card { flex: 0 0 150px; }
+  /* ~3 cards visible per row on mobile, matching the mock, instead of the
+     fixed 150px (only ~2.3 cards) this rule used before. */
+  .products-scroll .product-card { flex: 0 0 31%; }
+}
+
+/* ── Dot pagination (decorative — see ProductSection.tsx note) ── */
+.scroll-dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+}
+.scroll-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #e0e0e0;
+  transition: background 0.2s, width 0.2s;
+}
+.scroll-dot--active {
+  width: 18px;
+  border-radius: 4px;
+  background: #F5C518;
 }

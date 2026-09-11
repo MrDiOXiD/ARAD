@@ -21,6 +21,12 @@ export class UserEntity {
   id!: number;
 
   @Column()
+  name!: string;
+
+  @Column()
+  familyName!: string;
+
+  @Column()
   username!: string;
 
   @Column({ unique: true })
@@ -46,15 +52,15 @@ export class UserEntity {
   @CreateDateColumn()
   createdAt!: Date;
 
-@Column({ unique: true, nullable: true })
-googleId?: string;
+  @Column({ unique: true, nullable: true })
+  googleId?: string;
 
-// Google-only accounts never provide a phone number at signup, and
-// your phoneNumber column is currently NOT NULL + UNIQUE (from the
-// earlier migration). Making it nullable is the cleanest option —
-// otherwise every Google signup would need a fake placeholder phone
-// number, the same problem the earlier migration's backfill worked
-// around for existing rows. This needs its own migration (below).
+  // Google-only accounts never provide a phone number at signup, and
+  // your phoneNumber column is currently NOT NULL + UNIQUE (from the
+  // earlier migration). Making it nullable is the cleanest option —
+  // otherwise every Google signup would need a fake placeholder phone
+  // number, the same problem the earlier migration's backfill worked
+  // around for existing rows. This needs its own migration (below).
 
 
 

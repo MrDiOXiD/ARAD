@@ -136,3 +136,116 @@
 @media (max-width: 640px) {
   .footer-bottom { flex-direction: column; gap: 10px; text-align: center; }
 }
+
+/* ══════════════════════ MOBILE FOOTER (light theme) ══════════════════════
+   Deliberately light/cream, matching the mock — distinct from the desktop
+   footer's dark theme above. Flagging this rather than silently forking
+   the palette: worth reconciling later if you want one footer theme. */
+.footer-mobile {
+  background: linear-gradient(180deg, #fff7ec 0%, #fffdf9 40%);
+  padding: 32px 0 24px;
+}
+.footer-mobile-brand { padding: 0 16px; }
+
+.footer-info-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 14px rgba(0,0,0,0.05);
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 2px;
+}
+.footer-info-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #F5C518;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+.footer-info-title { font-size: 13px; font-weight: 700; color: #1a1a1a; }
+.footer-info-sub { font-size: 11px; color: #9ca3af; }
+.footer-info-btn {
+  margin-top: 10px;
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #F5C518;
+  color: #1a1a1a;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 8px 0;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: background 0.18s;
+}
+.footer-info-btn:hover { background: #E0B000; }
+
+.footer-accordion {
+  margin-top: 24px;
+  padding: 0 16px;
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
+.footer-accordion-item,
+.footer-accordion-trigger {
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+.footer-accordion-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 0;
+  background: none;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  color: #1a1a1a;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.footer-accordion-trigger span:nth-child(2) { flex: 1; text-align: right; }
+.footer-accordion-icon { font-size: 16px; color: #6b7280; }
+.footer-accordion-panel {
+  padding: 0 0 14px 26px;
+  font-size: 12px;
+  line-height: 1.8;
+  color: #6b7280;
+}
+
+.footer-trust {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 24px 16px 8px;
+  text-align: center;
+}
+.footer-trust-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  color: #9ca3af;
+  max-width: 90px;
+}
+.footer-trust-item i { font-size: 22px; color: #d1a900; }
+
+.footer-mobile-copyright {
+  margin-top: 16px;
+  padding: 0 16px;
+  text-align: center;
+  font-size: 11px;
+  color: #9ca3af;
+}

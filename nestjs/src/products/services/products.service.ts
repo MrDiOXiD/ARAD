@@ -6,11 +6,12 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { FindOptionsOrder, Repository } from "typeorm";
 import * as cloudinary from "cloudinary";
 
 import { ProductEntity } from "../entities/product.entity";
 import { CreateProductDto } from "../dto/create-product.dto";
+import { ProductSort } from "../enums/product-sort.enum";
 
 import { CategoriesEntity } from "../../categories/entities/category.entity";
 import { CategoriesService } from "../../categories/services/categories.service";
@@ -74,8 +75,9 @@ export class ProductsService {
         discountStartDate: dto.discountStartDate || null,
         discountEndDate: dto.discountEndDate || null,
         isActive: dto.isActive !== undefined ? dto.isActive : true,
+        isFeatured: dto.isFeatured ?? false,
         brand: dto.brand,
-        badge: dto.badge,
+        badges: dto.badges ?? null,
         attributes: dto.attributes,
       });
 
@@ -105,9 +107,22 @@ export class ProductsService {
     return product;
   }
 
-  async findAll(page = 1, limit = 10): Promise<ProductEntity[]> {
+  async findAll(
+    page = 1,
+    limit = 10,
+    sort: ProductSort = ProductSort.NEWEST,
+  ): Promise<ProductEntity[]> {
     const skip = (page - 1) * limit;
-    return this.productRepository.find({ skip, take: limit });
+
+    // createdAt tiebreaker on 'featured' keeps pagination stable across pages
+    // when multiple rows share isFeatured=true (ORDER BY on a low-cardinality
+    // boolean alone is not deterministic for OFFSET pagination).
+    const order: FindOptionsOrder<ProductEntity> =
+      sort === ProductSort.FEATURED
+        ? { isFeatured: "DESC", createdAt: "DESC" }
+        : { createdAt: "DESC" };
+
+    return this.productRepository.find({ skip, take: limit, order });
   }
 
   async findByCategoryId(categoryId: number): Promise<ProductEntity[]> {
@@ -134,6 +149,12 @@ export class ProductsService {
       product.categoryId = category.id;
     }
 
+    return this.productRepository.save(product);
+  }
+
+  async setFeatured(id: number, isFeatured: boolean): Promise<ProductEntity> {
+    const product = await this.findOne(id);
+    product.isFeatured = isFeatured;
     return this.productRepository.save(product);
   }
 

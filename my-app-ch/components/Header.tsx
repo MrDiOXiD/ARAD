@@ -68,7 +68,11 @@ export default function Header() {
           ║           TOP ROW               ║
           ╚══════════════════════════════════╝ */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center gap-4 h-[68px]">
+
+        {/* ╔══════════════════════════════════╗
+            ║   DESKTOP TOP ROW (sm and up)    ║
+            ╚══════════════════════════════════╝ */}
+        <div className="hidden sm:flex items-center gap-4 h-[68px]">
 
           {/* Logo placeholder */}
           <Link href="/">
@@ -78,7 +82,7 @@ export default function Header() {
           </Link>
 
           {/* vertical divider */}
-          <div className="hidden sm:block w-px h-10 bg-gray-200 flex-shrink-0" />
+          <div className="w-px h-10 bg-gray-200 flex-shrink-0" />
 
           {/* Search bar */}
           <div className="flex-1 search-wrap">
@@ -102,10 +106,10 @@ export default function Header() {
           </div>
 
           {/* vertical divider */}
-          <div className="hidden sm:block w-px h-10 bg-gray-200 flex-shrink-0" />
+          <div className="w-px h-10 bg-gray-200 flex-shrink-0" />
 
           {/* User actions — desktop */}
-          <div className="hidden sm:flex items-center gap-5 flex-shrink-0">
+          <div className="flex items-center gap-5 flex-shrink-0">
 
             {/* Cart */}
             <Link href="/cart" className="top-action relative flex flex-col items-center gap-0.5 text-gray-700 no-underline">
@@ -144,19 +148,58 @@ export default function Header() {
             </Link>
 
           </div>
+        </div>
 
-          {/* Hamburger — mobile only */}
+        {/* ╔══════════════════════════════════╗
+            ║   MOBILE TOP ROW (below sm)      ║
+            ║   hamburger ← physical left       ║
+            ║   brand mark → physical right     ║
+            ╚══════════════════════════════════╝ */}
+        <div className="flex sm:hidden items-center justify-between h-16">
           <button
             type="button"
             onClick={() => setOpen(p => !p)}
             aria-label="منو"
-            className="flex sm:hidden flex-col gap-1.5 p-1 ml-auto flex-shrink-0 bg-transparent border-none cursor-pointer"
+            className="flex flex-col gap-1.5 p-1 flex-shrink-0 bg-transparent border-none cursor-pointer"
           >
             <span className="block w-6 h-0.5 bg-gray-700 rounded transition-all duration-300" style={L1} />
             <span className="block w-6 h-0.5 bg-gray-700 rounded transition-all duration-300" style={L2} />
             <span className="block w-6 h-0.5 bg-gray-700 rounded transition-all duration-300" style={L3} />
           </button>
 
+          <Link href="/" className="flex items-center gap-2 no-underline">
+            <div className="flex flex-col items-end leading-tight">
+              <span className="text-[15px] font-extrabold text-gray-900">الکتریکی فانوس</span>
+              <span className="text-[10px] text-gray-400" dir="ltr">electricfanoos.com</span>
+            </div>
+            <div
+              className="flex items-center justify-center w-9 h-9 rounded-full flex-shrink-0"
+              style={{ background: `linear-gradient(135deg, ${Y}, #FF7A00)` }}
+            >
+              <i className="bi bi-lightning-charge-fill text-white text-base" />
+            </div>
+          </Link>
+        </div>
+
+        {/* ╔══════════════════════════════════╗
+            ║   MOBILE SEARCH ROW (below sm)   ║
+            ╚══════════════════════════════════╝ */}
+        <div className="sm:hidden pb-3 search-wrap">
+          <div className="search-bar flex items-center border-2 border-gray-200 rounded-xl overflow-hidden bg-gray-50 transition-all duration-200">
+            <button
+              type="button"
+              className="search-shine flex-shrink-0 h-11 px-4 flex items-center justify-center border-none cursor-pointer transition-colors duration-200"
+              style={{ backgroundColor: Y }}
+            >
+              <i className="bi bi-search text-gray-900 text-lg" />
+            </button>
+            <input
+              type="text"
+              placeholder="کالای مورد نیاز را جستجو کنید ..."
+              className="flex-1 bg-transparent outline-none border-none text-right text-sm text-gray-700 placeholder-gray-400 px-3 h-11"
+              style={{ direction: 'rtl', fontFamily: 'Vazirmatn, sans-serif' }}
+            />
+          </div>
         </div>
       </div>
 
@@ -202,27 +245,7 @@ export default function Header() {
           ╚══════════════════════════════════╝ */}
       {open && (
         <div className="mobile-menu-drop sm:hidden bg-white border-t border-gray-100 px-4 pb-4">
-
-          {/* mobile search */}
-          <div className="pt-3 pb-2">
-            <div className="search-wrap">
-              <div className="search-bar flex items-center border-2 border-gray-200 rounded-xl overflow-hidden bg-gray-50">
-                <button
-                  type="button"
-                  className="flex-shrink-0 h-10 px-4 flex items-center justify-center border-none cursor-pointer"
-                  style={{ backgroundColor: Y }}
-                >
-                  <i className="bi bi-search text-gray-900" />
-                </button>
-                <input
-                  type="text"
-                  placeholder="جستجو ..."
-                  className="flex-1 bg-transparent outline-none border-none text-right text-sm text-gray-700 placeholder-gray-400 px-3 h-10"
-                  style={{ direction: 'rtl', fontFamily: 'Vazirmatn, sans-serif' }}
-                />
-              </div>
-            </div>
-          </div>
+          {/* search removed — the persistent search row above the hamburger already covers it */}
 
           {/* phone */}
           <div className="flex items-center gap-2 py-3 border-b border-gray-100 mb-1">
