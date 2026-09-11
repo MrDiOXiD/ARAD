@@ -1,8 +1,11 @@
 // src/products/dto/create-product.dto.ts
 
 import {
+  ArrayMaxSize,
+  IsArray,
   IsBoolean,
   IsDate,
+  IsEnum,
   IsInt,
   IsNotEmpty,
   IsNumber,
@@ -17,6 +20,7 @@ import {
 } from 'class-validator';
 // 1. Add "Transform" to your class-transformer imports
 import { Type, Transform } from 'class-transformer';
+import { ProductBadge } from '../enums/product-badge.enum';
 
 export class CreateProductDto {
   @IsString()
@@ -76,17 +80,39 @@ export class CreateProductDto {
   @IsBoolean()
   isActive?: boolean;
 
+  // Admin-controlled — surfaces the product under sort=featured
+  @IsOptional()
+  @Transform(({ value }) => {
+    if (value === 'true' || value === 1 || value === '1') return true;
+    if (value === 'false' || value === 0 || value === '0') return false;
+    return value;
+  })
+  @IsBoolean()
+  isFeatured?: boolean;
+
   @IsOptional()
   @IsString()
   @IsOptional()
   @MaxLength(100)
   brand?: string;
 
+  // 🌟 Multiple badges at once (e.g. ["new","hot"]) — arrives as a JSON string
+  // from multipart/form-data, same convention as `attributes` below.
   @IsOptional()
-  @IsString()
-  @IsOptional()
-  @MaxLength(50)
-  badge?: string;
+  @Transform(({ value }) => {
+    if (typeof value === 'string' && value.trim() !== '') {
+      try {
+        return JSON.parse(value);
+      } catch (error) {
+        return value; // let @IsArray throw a clear validation error
+      }
+    }
+    return value;
+  })
+  @IsArray()
+  @ArrayMaxSize(6)
+  @IsEnum(ProductBadge, { each: true, message: `Each badge must be one of: ${Object.values(ProductBadge).join(', ')}` })
+  badges?: ProductBadge[];
 
   // 🌟 The parsing magic for multipart/form-data
   @IsOptional()
